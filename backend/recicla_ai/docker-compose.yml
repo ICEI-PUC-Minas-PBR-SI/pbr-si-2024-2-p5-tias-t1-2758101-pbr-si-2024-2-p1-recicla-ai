@@ -1,0 +1,31 @@
+version: "3.9"
+#java -jar microservice-0.0.1.jar --spring.config.location=./src/main/resources/application.properties
+services:
+  app:
+    container_name: java_app
+    environment:
+      - DATABASE_URL=jdbc:mysql://mysql:3306/microservice
+      - DATABASE_USERNAME=root
+      - DATABASE_PASSWORD=root
+    build:
+      context: ./
+
+    entrypoint:
+      "mvn clean compile spring-boot:run"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+  mysql:
+    image: mysql:latest
+    container_name: app_database
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: microservice
+      MYSQL_TCP_PORT: 3306
+    ports:
+      - "3306:3306"
+networks:
+  bridge-network:
+    name: bridge-network
+    driver: bridge
