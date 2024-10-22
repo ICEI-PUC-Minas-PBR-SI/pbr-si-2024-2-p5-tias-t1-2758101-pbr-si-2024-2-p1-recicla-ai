@@ -18,6 +18,7 @@ public class CompanyController {
     @PostMapping
     public @ResponseBody Company newCompany(@RequestBody CompanyRecord companyRecord){
         Company company = new Company(companyRecord);
+        this.companyRepo.save(company);
         return company;
     }
 

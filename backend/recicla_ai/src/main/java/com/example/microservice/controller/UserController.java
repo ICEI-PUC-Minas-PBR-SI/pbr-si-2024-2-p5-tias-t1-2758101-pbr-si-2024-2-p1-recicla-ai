@@ -19,6 +19,7 @@ public class UserController {
     @PostMapping
     public @ResponseBody User newUser(@RequestBody UserRecord userRecord){
         User user = new User(userRecord);
+        this.userRepo.save(user);
         return user;
     }
 
