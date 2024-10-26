@@ -6,7 +6,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import * as Yup from "yup";
-import { formatPhoneNumber } from "../utils/format";
+import { formatPhoneNumber, formatCPF, formatNoDots } from "../utils/format";
 import CustomTextInput from "../components/CustomTextInput";
 import { Formik } from "formik";
 import ErrorMessage from "../components/ErrorMessageFormik";
@@ -25,8 +25,9 @@ const materials = [
 const RegisterSchema = Yup.object().shape({
     name: Yup.string().required("O nome é obrigatório"),
     email: Yup.string().email("Digite um e-mail válido").required("O e-mail é obrigatório"),
+    cpf: Yup.string().required("O CPF é obrigatório").length(14, "Verifique se o CPF informado está correto"),
     password: Yup.string().min(6, "A senha deve ter pelo menos 6 caracteres").required("A senha é obrigatória"),
-    phone: Yup.string().required("O número de telefone é obrigatório"),
+    phone: Yup.string().required("O número de telefone é obrigatório").length(14, "Verifique se o número de telefone informado está correto"),
     birthdate: Yup.date().required("A data de nascimento é obrigatória").max(new Date(), "A data de nascimento não pode ser igual ou posterior à data atual"),
     confirmPassword: Yup.string()
         .oneOf([Yup.ref('password'), null], "As senhas não coincidem")
@@ -42,7 +43,8 @@ const RegisterUser = ({ navigation }) => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     async function handleRegister(values) {
-
+        values.cpf = formatNoDots(values.cpf);
+        values.phone = formatNoDots(values.phone);
         try {
             const response = values;
             // await api.post(`/registeruser`,values);
@@ -84,6 +86,7 @@ const RegisterUser = ({ navigation }) => {
                     initialValues={{
                         name: "",
                         email: "",
+                        cpf: "",
                         phone: "",
                         password: "",
                         confirmPassword: "",
@@ -112,6 +115,20 @@ const RegisterUser = ({ navigation }) => {
                                 keyboardType="email-address"
                             />
                             <ErrorMessage error={errors.email} />
+
+                            <CustomTextInput
+                                label="CPF"
+                                value={formatCPF(values.cpf)}
+                                onChangeText={text => {
+                                    if(text.length <= 14){
+                                        
+                                        handleChange("cpf")(text);
+                                    }
+                                }}
+                                onBlur={handleBlur("cpf")}
+                                keyboardType="phone-pad"
+                            />
+                            <ErrorMessage error={errors.cpf} />
 
                             <CustomTextInput
                                 label="Telefone"
@@ -206,7 +223,7 @@ const styles = StyleSheet.create({
         flexGrow: 1,
     },
     input: {
-        marginBottom: 20,
+        marginBottom: 5,
         backgroundColor: "#f0f0f0",
         borderRadius: 8,
         height: 50,

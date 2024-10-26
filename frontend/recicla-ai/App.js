@@ -1,6 +1,6 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createNativeStackNavigator, TransitionPresets } from "@react-navigation/native-stack";
 import LoginScreen from "./src/pages/Login";
 import CompanyRegisterScreen from "./src/pages/RegisterCompany";
 import UserRegisterScreen from "./src/pages/RegisterUser";
@@ -10,7 +10,9 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName="Login" screenOptions={{
+          animation: "slide_from_right",
+        }}>
         <Stack.Screen 
           name="Login" 
           component={LoginScreen} 

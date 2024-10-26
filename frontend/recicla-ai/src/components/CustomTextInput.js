@@ -2,16 +2,14 @@ import React from "react";
 import { TextInput } from "react-native-paper";
 import { StyleSheet } from "react-native";
 
-const CustomTextInput = ({ label, value, onChangeText, secureTextEntry, style, right, keyboardType, disabled=false }) => {
+const CustomTextInput = ({ label, value, onChangeText, style,keyboardType, disabled=false }) => {
     return (
         <TextInput
             label={label}
             value={value}
             onChangeText={onChangeText}
-            secureTextEntry={secureTextEntry}
             style={[styles.input, style]}
             mode="outlined"
-            right={right}
             outlineColor="#ccc"
             activeOutlineColor="#007BFF"
             keyboardType={keyboardType}

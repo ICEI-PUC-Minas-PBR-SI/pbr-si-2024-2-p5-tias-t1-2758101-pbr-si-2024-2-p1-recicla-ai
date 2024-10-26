@@ -6,7 +6,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import * as Yup from "yup";
-import { formatPhoneNumber, formatCnpj, formatNoDot } from "../utils/format";
+import { formatPhoneNumber, formatCnpj, formatNoDots } from "../utils/format";
 import CustomTextInput from "../components/CustomTextInput";
 import { Formik } from "formik";
 import axios from "axios";
@@ -27,8 +27,8 @@ const materials = [
 const RegisterSchema = Yup.object().shape({
     name: Yup.string().required("O nome é obrigatório"),
     email: Yup.string().email("Digite um e-mail válido").required("O e-mail é obrigatório"),
-    phone: Yup.string().required("O número de telefone é obrigatório"),
-    cnpj: Yup.string().required("O CNPJ é obrigatório").max(18, "Verifique se o CNPJ está correto"),
+    phone: Yup.string().required("O número de telefone é obrigatório").length(14, "Verifique se o número de telefone informado está correto"),
+    cnpj: Yup.string().required("O CNPJ é obrigatório").length(18, "Verifique se o CNPJ informado está correto"),
     postal_code: Yup.string().required("O CEP é obrigatório"),
     number: Yup.string().required("O número é obrigatório"),
     password: Yup.string().min(6, "A senha deve ter pelo menos 6 caracteres").required("A senha é obrigatória"),
@@ -45,6 +45,8 @@ const RegisterUser = ({ navigation }) => {
     const [address, setAddress] = useState("");
 
     async function handleRegisterCompany(values) {
+        values.cnpj = formatNoDots(values.cnpj);
+        values.phone = formatNoDots(values.phone);
 
         try {
             const response = values;
@@ -265,7 +267,7 @@ const styles = StyleSheet.create({
         flexGrow: 1,
     },
     input: {
-        marginBottom: 20,
+        marginBottom: 5,
         backgroundColor: "#f0f0f0",
         borderRadius: 8,
         height: 50,
