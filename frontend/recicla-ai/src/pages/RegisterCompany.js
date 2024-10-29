@@ -2,9 +2,6 @@ import React, { useState } from "react";
 import { View, StyleSheet, Alert, ScrollView } from "react-native";
 import { TextInput, Button, Text, Menu, Provider as PaperProvider } from "react-native-paper";
 import CustomButton from "../components/CustomButton";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import * as Yup from "yup";
 import { formatPhoneNumber, formatCnpj, formatNoDots } from "../utils/format";
 import CustomTextInput from "../components/CustomTextInput";
@@ -12,28 +9,18 @@ import { Formik } from "formik";
 import axios from "axios";
 import ErrorMessage from "../components/ErrorMessageFormik";
 import api from "../services/api";
-
-const materials = [
-    "Papel",
-    "Plástico",
-    "Vidro",
-    "Metal",
-    "Óleo",
-    "Eletrônicos",
-    "Tecido",
-    "Resíduos Orgânicos",
-];
+import materials from "../utils/materials";
 
 const RegisterSchema = Yup.object().shape({
     name: Yup.string().required("O nome é obrigatório"),
     email: Yup.string().email("Digite um e-mail válido").required("O e-mail é obrigatório"),
-    phone: Yup.string().required("O número de telefone é obrigatório").length(14, "Verifique se o número de telefone informado está correto"),
+    phoneNumber: Yup.string().required("O número de telefone é obrigatório").length(14, "Verifique se o número de telefone informado está correto"),
     cnpj: Yup.string().required("O CNPJ é obrigatório").length(18, "Verifique se o CNPJ informado está correto"),
     postal_code: Yup.string().required("O CEP é obrigatório"),
     number: Yup.string().required("O número é obrigatório"),
     password: Yup.string().min(6, "A senha deve ter pelo menos 6 caracteres").required("A senha é obrigatória"),
     confirmPassword: Yup.string()
-        .oneOf([Yup.ref('password'), null], "As senhas não coincidem")
+        .oneOf([Yup.ref("password"), null], "As senhas não coincidem")
         .required("A confirmação da senha é obrigatória"),
     recyclingPreferences: Yup.array().required("Selecione um ou mais materiais recicláveis que sua empresa aceitará."),
 });
@@ -46,10 +33,32 @@ const RegisterUser = ({ navigation }) => {
 
     async function handleRegisterCompany(values) {
         values.cnpj = formatNoDots(values.cnpj);
-        values.phone = formatNoDots(values.phone);
+        values.phoneNumber = formatNoDots(values.phoneNumber);
 
         try {
             const response = values;
+
+            values.cpf = formatNoDots(values.cpf);
+            values.phoneNumber = formatNoDots(values.phoneNumber);
+            try {
+
+                const response = api.post(`/user`, values)
+                    .then(response => {
+                        console.log(response);
+                        console.log(response.data);
+                        Alert.alert("Conta criada com sucesso!");
+                        navigation.goBack()
+                    })
+                    .catch(error => {
+                        Alert.alert("Erro ao criar conta!");
+                        if (error.response) {
+                            console.error("Erro na resposta:", error.response.data);
+                        }
+                    });
+            } catch (e) {
+                console.log(e);
+            }
+
 
             // await api.post(`/registercompany`,values);
             if (response) {
@@ -102,7 +111,7 @@ const RegisterUser = ({ navigation }) => {
                     initialValues={{
                         name: "",
                         email: "",
-                        phone: "",
+                        phoneNumber: "",
                         cnpj: "",
                         postal_code: "",
                         password: "",
@@ -137,16 +146,16 @@ const RegisterUser = ({ navigation }) => {
 
                             <CustomTextInput
                                 label="Telefone"
-                                value={formatPhoneNumber(values.phone)}
+                                value={formatPhoneNumber(values.phoneNumber)}
                                 onChangeText={text => {
                                     if (text.length <= 15) {
-                                        handleChange("phone")(text);
+                                        handleChange("phoneNumber")(text);
                                     }
                                 }}
-                                onBlur={handleBlur("phone")}
+                                onBlur={handleBlur("phoneNumber")}
                                 keyboardType="phone-pad"
                             />
-                            <ErrorMessage error={errors.phone} />
+                            <ErrorMessage error={errors.phoneNumber} />
 
                             <CustomTextInput
                                 label="CNPJ"

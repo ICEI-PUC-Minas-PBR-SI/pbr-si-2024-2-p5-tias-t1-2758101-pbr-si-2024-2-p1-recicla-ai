@@ -1,5 +1,5 @@
-import React, {useState} from "react";
-import { View, StyleSheet, Text, Image, TouchableOpacity, Alert,} from "react-native";
+import React, { useState } from "react";
+import { View, StyleSheet, Text, Image, TouchableOpacity, Alert, } from "react-native";
 import { TextInput } from "react-native-paper";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -23,7 +23,12 @@ const Login = ({ navigation }) => {
 
             // await api.post(`/login`,values);
             if (response) {
-                Alert.alert("Logou!");
+                if (values.email == "teste@gmail" && values.password == "abcd") {
+                    navigation.navigate("Home");
+                }
+                else {
+                    Alert.alert("Email ou senha estão incorretos!");
+                }
             }
             else {
                 Alert.alert("Erro ao entrar no aplicativo!");
@@ -70,10 +75,10 @@ const Login = ({ navigation }) => {
                     <CustomButton onPress={handleSubmit} title="Entrar" />
 
                     <View style={styles.row}>
-                        <TouchableOpacity onPress={() => { resetForm(); navigation.navigate("UserRegister")}}>
+                        <TouchableOpacity onPress={() => { resetForm(); navigation.navigate("UserRegister") }}>
                             <Text style={styles.link}>Registrar Usuário</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => { resetForm();navigation.navigate("CompanyRegister")}}>
+                        <TouchableOpacity onPress={() => { resetForm(); navigation.navigate("CompanyRegister") }}>
                             <Text style={styles.link}>Registrar Empresa</Text>
                         </TouchableOpacity>
                     </View>
