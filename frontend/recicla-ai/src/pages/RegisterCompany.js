@@ -42,7 +42,7 @@ const RegisterUser = ({ navigation }) => {
             values.phoneNumber = formatNoDots(values.phoneNumber);
             try {
 
-                const response = api.post(`/user`, values)
+                const response = api.post(`/company`, values)
                     .then(response => {
                         console.log(response);
                         console.log(response.data);
