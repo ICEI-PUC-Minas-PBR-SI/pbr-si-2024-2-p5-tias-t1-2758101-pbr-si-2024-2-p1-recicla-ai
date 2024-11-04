@@ -21,6 +21,14 @@ export const formatCnpj = (input) => {
 
 };
 
+export const formatCPF =(input) => {
+    input = input.replace(/\D/g, '');
+  
+    return input.replace(/(\d{3})(\d)/, '$1.$2') // Adiciona o primeiro ponto
+              .replace(/(\d{3})(\d)/, '$1.$2') // Adiciona o segundo ponto
+              .replace(/(\d{3})(\d{1,2})$/, '$1-$2'); // Adiciona o hífen
+}
+
 export const formatNoDots = (input) => {
 
     return input.replace(/[^\d]/g, "");

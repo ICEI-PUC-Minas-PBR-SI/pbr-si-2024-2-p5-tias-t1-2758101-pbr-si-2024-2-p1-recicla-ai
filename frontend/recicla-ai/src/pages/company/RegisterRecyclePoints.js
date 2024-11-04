@@ -1,31 +1,25 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Alert, ScrollView } from "react-native";
 import { TextInput, Button, Text, Menu, Provider as PaperProvider } from "react-native-paper";
-import CustomButton from "../components/CustomButton";
+import CustomButton from "../../components/CustomButton";
 import * as Yup from "yup";
-import { formatPhoneNumber, formatCnpj, formatNoDots } from "../utils/format";
-import CustomTextInput from "../components/CustomTextInput";
+import { formatPhoneNumber, formatCnpj, formatNoDots } from "../../utils/format";
+import CustomTextInput from "../../components/CustomTextInput";
 import { Formik } from "formik";
 import axios from "axios";
-import ErrorMessage from "../components/ErrorMessageFormik";
-import api from "../services/api";
-import materials from "../utils/materials";
+import ErrorMessage from "../../components/ErrorMessageFormik";
+import api from "../../services/api";
+import materials from "../../utils/materials";
 
 const RegisterSchema = Yup.object().shape({
     name: Yup.string().required("O nome é obrigatório"),
-    email: Yup.string().email("Digite um e-mail válido").required("O e-mail é obrigatório"),
     phoneNumber: Yup.string().required("O número de telefone é obrigatório").length(14, "Verifique se o número de telefone informado está correto"),
-    cnpj: Yup.string().required("O CNPJ é obrigatório").length(18, "Verifique se o CNPJ informado está correto"),
     postal_code: Yup.string().required("O CEP é obrigatório"),
     number: Yup.string().required("O número é obrigatório"),
-    password: Yup.string().min(6, "A senha deve ter pelo menos 6 caracteres").required("A senha é obrigatória"),
-    confirmPassword: Yup.string()
-        .oneOf([Yup.ref("password"), null], "As senhas não coincidem")
-        .required("A confirmação da senha é obrigatória"),
     recyclingPreferences: Yup.array().required("Selecione um ou mais materiais recicláveis que sua empresa aceitará."),
 });
 
-const RegisterUser = ({ navigation }) => {
+const RegisterRecyclePoints = ({ navigation }) => {
     const [visible, setVisible] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -110,12 +104,8 @@ const RegisterUser = ({ navigation }) => {
                 <Formik
                     initialValues={{
                         name: "",
-                        email: "",
                         phoneNumber: "",
-                        cnpj: "",
                         postal_code: "",
-                        password: "",
-                        confirmPassword: "",
                         number: "",
                         // recyclingPreferences: []
                     }}
@@ -128,21 +118,12 @@ const RegisterUser = ({ navigation }) => {
                         <View style={styles.formContainer}>
 
                             <CustomTextInput
-                                label="Nome Empresa/Razão Social"
+                                label="Nome do Ponto de Coleta"
                                 value={values.name}
                                 onChangeText={handleChange("name")}
                                 onBlur={handleBlur("name")}
                             />
                             <ErrorMessage error={errors.name} />
-
-                            <CustomTextInput
-                                label="Email"
-                                value={values.email}
-                                onChangeText={handleChange("email")}
-                                onBlur={handleBlur("email")}
-                                keyboardType="email-address"
-                            />
-                            <ErrorMessage error={errors.email} />
 
                             <CustomTextInput
                                 label="Telefone"
@@ -156,19 +137,6 @@ const RegisterUser = ({ navigation }) => {
                                 keyboardType="phone-pad"
                             />
                             <ErrorMessage error={errors.phoneNumber} />
-
-                            <CustomTextInput
-                                label="CNPJ"
-                                value={formatCnpj(values.cnpj)}
-                                onChangeText={text => {
-                                    if (text.length <= 18) {
-                                        handleChange("cnpj")(text);
-                                    }
-                                }}
-                                onBlur={handleBlur("cnpj")}
-                                keyboardType={"phone-pad"}
-                            />
-                            <ErrorMessage error={errors.cnpj} />
 
                             <CustomTextInput
                                 label="CEP"
@@ -228,35 +196,8 @@ const RegisterUser = ({ navigation }) => {
 
                             <ErrorMessage error={errors.recyclingPreferences} />
 
-                            <TextInput
-                                label="Senha"
-                                value={values.password}
-                                onChangeText={handleChange("password")}
-                                secureTextEntry={!showPassword}
-                                style={styles.input}
-                                right={<TextInput.Icon
-                                    icon={showPassword ? "eye-off" : "eye"}
-                                    onPress={() => setShowPassword(!showPassword)}
-                                />}
-                                mode="outlined"
-                            />
-                            <ErrorMessage error={errors.password} />
 
-                            <TextInput
-                                label="Confirmar Senha"
-                                value={values.confirmPassword}
-                                onChangeText={handleChange("confirmPassword")}
-                                secureTextEntry={!showConfirmPassword}
-                                style={styles.input}
-                                right={<TextInput.Icon
-                                    icon={showConfirmPassword ? "eye-off" : "eye"}
-                                    onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-                                />}
-                                mode="outlined"
-                            />
-                            <ErrorMessage error={errors.confirmPassword} />
-
-                            <CustomButton onPress={handleSubmit} title="Registrar" />
+                            <CustomButton onPress={handleSubmit} title="Registrar novo Ponto" />
                         </View>
                     )}
                 </Formik>
@@ -310,4 +251,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default RegisterUser;
+export default RegisterRecyclePoints;

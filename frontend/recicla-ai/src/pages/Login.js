@@ -1,6 +1,6 @@
-import React, {useState} from "react";
-import { View, StyleSheet, Text, Image, TouchableOpacity, Alert,} from "react-native";
-import { TextInput } from "react-native-paper";
+import React, { useState } from "react";
+import { View, StyleSheet, Text, Image, TouchableOpacity, Alert, } from "react-native";
+import { TextInput, Switch, Dropdown } from "react-native-paper";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import ErrorMessage from "../components/ErrorMessageFormik";
@@ -15,15 +15,33 @@ const LoginSchema = Yup.object().shape({
 
 const Login = ({ navigation }) => {
     const [showPassword, setShowPassword] = useState(false);
+    const [isSwitchOn, setIsSwitchOn] = React.useState(false);
 
+    const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
 
     async function handleLogin(values) {
         try {
             const response = values;
+            let apiUrl;
 
-            // await api.post(`/login`,values);
+            if (isSwitchOn) {
+                apiUrl = `/login/company`;
+            } else {
+                apiUrl = `/login/user`;
+            }
+
+            // const response = await api.post(apiUrl, values);
+
             if (response) {
-                Alert.alert("Logou!");
+                if (values.email == "teste@gmail" && values.password == "abcd" && !isSwitchOn) {
+                    navigation.navigate("HomeUser");
+                }
+                else if(values.email == "testecompany@gmail" && values.password == "abcd" && isSwitchOn){
+                    navigation.navigate("HomeCompany");
+                }
+                else {
+                    Alert.alert("Email ou senha estão incorretos!");
+                }
             }
             else {
                 Alert.alert("Erro ao entrar no aplicativo!");
@@ -67,13 +85,21 @@ const Login = ({ navigation }) => {
                     />
                     <ErrorMessage error={errors.password} />
 
+                    <View style={styles.switchContainer}>
+                        <Text>Selecione o tipo de login</Text>
+                        <View style={styles.switchRightContainer}>
+                            <Text style={{ fontWeight: "bold", marginRight: 10, color: colors.backgroundButton }}>{isSwitchOn ? "EMPRESA" : "USUÁRIO"}</Text>
+                            <Switch value={isSwitchOn} onValueChange={onToggleSwitch} thumbColor={isSwitchOn ? colors.backgroundButton : colors.activeThumb} />
+                        </View>
+                    </View>
+
                     <CustomButton onPress={handleSubmit} title="Entrar" />
 
                     <View style={styles.row}>
-                        <TouchableOpacity onPress={() => { resetForm(); navigation.navigate("UserRegister")}}>
+                        <TouchableOpacity onPress={() => { resetForm(); navigation.navigate("UserRegister") }}>
                             <Text style={styles.link}>Registrar Usuário</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => { resetForm();navigation.navigate("CompanyRegister")}}>
+                        <TouchableOpacity onPress={() => { resetForm(); navigation.navigate("CompanyRegister") }}>
                             <Text style={styles.link}>Registrar Empresa</Text>
                         </TouchableOpacity>
                     </View>
@@ -91,10 +117,6 @@ const styles = StyleSheet.create({
         marginBottom: 40,
         alignSelf: "center",
     },
-    errorText: {
-        color: colors.red,
-        marginBottom: 10,
-    },
     link: {
         marginHorizontal: 10,
         color: colors.text,
@@ -110,6 +132,16 @@ const styles = StyleSheet.create({
         backgroundColor: "#f0f0f0",
         borderRadius: 8,
         height: 50,
+    },
+    switchContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    switchRightContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "flex-end",
+        flex: 1,
     },
 
 });

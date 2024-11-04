@@ -6,32 +6,25 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import * as Yup from "yup";
-import { formatPhoneNumber } from "../utils/format";
+import { formatPhoneNumber, formatCPF, formatNoDots } from "../utils/format";
 import CustomTextInput from "../components/CustomTextInput";
 import { Formik } from "formik";
 import ErrorMessage from "../components/ErrorMessageFormik";
+import api from "../services/api";
+import materials from "../utils/materials";
 
-const materials = [
-    "Papel",
-    "Plástico",
-    "Vidro",
-    "Metal",
-    "Óleo",
-    "Eletrônicos",
-    "Tecido",
-    "Resíduos Orgânicos",
-];
 
 const RegisterSchema = Yup.object().shape({
     name: Yup.string().required("O nome é obrigatório"),
     email: Yup.string().email("Digite um e-mail válido").required("O e-mail é obrigatório"),
+    cpf: Yup.string().required("O CPF é obrigatório").length(14, "Verifique se o CPF informado está correto"),
     password: Yup.string().min(6, "A senha deve ter pelo menos 6 caracteres").required("A senha é obrigatória"),
-    phone: Yup.string().required("O número de telefone é obrigatório"),
+    phoneNumber: Yup.string().required("O número de telefone é obrigatório").length(14, "Verifique se o número de telefone informado está correto"),
     birthdate: Yup.date().required("A data de nascimento é obrigatória").max(new Date(), "A data de nascimento não pode ser igual ou posterior à data atual"),
     confirmPassword: Yup.string()
-        .oneOf([Yup.ref('password'), null], "As senhas não coincidem")
+        .oneOf([Yup.ref("password"), null], "As senhas não coincidem")
         .required("A confirmação da senha é obrigatória"),
-    recyclingPreference: Yup.string(),
+    recyclePreference: Yup.string(),
 });
 
 const RegisterUser = ({ navigation }) => {
@@ -42,17 +35,23 @@ const RegisterUser = ({ navigation }) => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     async function handleRegister(values) {
-
+        values.cpf = formatNoDots(values.cpf);
+        values.phoneNumber = formatNoDots(values.phoneNumber);
         try {
-            const response = values;
-            // await api.post(`/registeruser`,values);
-            if (response) {
-                Alert.alert("Conta criada com sucesso!");
-                navigation.goBack()
-            }
-            else {
-                Alert.alert("Erro ao criar conta!");
-            }
+
+            const response = api.post(`/user`, values)
+                .then(response => {
+                    console.log(response);
+                    console.log(response.data);
+                    Alert.alert("Conta criada com sucesso!");
+                    navigation.goBack()
+                })
+                .catch(error => {
+                    Alert.alert("Erro ao criar conta!");
+                    if (error.response) {
+                        console.error("Erro na resposta:", error.response.data);
+                    }
+                });
         } catch (e) {
             console.log(e);
         }
@@ -62,7 +61,7 @@ const RegisterUser = ({ navigation }) => {
     const closeMenu = () => setVisible(false);
 
     const selectMaterial = (setFieldValue, material) => {
-        setFieldValue("recyclingPreference", material);
+        setFieldValue("recyclePreference", material);
         closeMenu();
     };
 
@@ -84,7 +83,8 @@ const RegisterUser = ({ navigation }) => {
                     initialValues={{
                         name: "",
                         email: "",
-                        phone: "",
+                        cpf: "",
+                        phoneNumber: "",
                         password: "",
                         confirmPassword: "",
                         birthdate: new Date(),
@@ -114,17 +114,31 @@ const RegisterUser = ({ navigation }) => {
                             <ErrorMessage error={errors.email} />
 
                             <CustomTextInput
-                                label="Telefone"
-                                value={formatPhoneNumber(values.phone)}
+                                label="CPF"
+                                value={formatCPF(values.cpf)}
                                 onChangeText={text => {
-                                    if (text.length <= 15) {
-                                        handleChange("phone")(text);
+                                    if (text.length <= 14) {
+
+                                        handleChange("cpf")(text);
                                     }
                                 }}
-                                onBlur={handleBlur("phone")}
+                                onBlur={handleBlur("cpf")}
                                 keyboardType="phone-pad"
                             />
-                            <ErrorMessage error={errors.phone} />
+                            <ErrorMessage error={errors.cpf} />
+
+                            <CustomTextInput
+                                label="Telefone"
+                                value={formatPhoneNumber(values.phoneNumber)}
+                                onChangeText={text => {
+                                    if (text.length <= 15) {
+                                        handleChange("phoneNumber")(text);
+                                    }
+                                }}
+                                onBlur={handleBlur("phoneNumber")}
+                                keyboardType="phone-pad"
+                            />
+                            <ErrorMessage error={errors.phoneNumber} />
 
                             <Text>Data de Nascimento</Text>
                             <Button onPress={showDatepicker} style={styles.dateButton} mode="outlined" textColor="#000000">
@@ -146,7 +160,7 @@ const RegisterUser = ({ navigation }) => {
                                 visible={visible}
                                 onDismiss={closeMenu}
                                 style={styles.menuStyle}
-                                anchor={<Button onPress={openMenu} style={styles.menuButton} mode="outlined" labelStyle={{ color: "#000000" }}>{values.recyclingPreference || "Selecione um material"}</Button>}
+                                anchor={<Button onPress={openMenu} style={styles.menuButton} mode="outlined" labelStyle={{ color: "#000000" }}>{values.recyclePreference || "Selecione um material"}</Button>}
                             >
                                 <ScrollView style={styles.menuScroll}>
                                     {materials.map((material, index) => (
@@ -155,7 +169,7 @@ const RegisterUser = ({ navigation }) => {
                                 </ScrollView>
                             </Menu>
 
-                            <ErrorMessage error={errors.recyclingPreference} />
+                            <ErrorMessage error={errors.recyclePreference} />
 
                             <TextInput
                                 label="Senha"
@@ -206,7 +220,7 @@ const styles = StyleSheet.create({
         flexGrow: 1,
     },
     input: {
-        marginBottom: 20,
+        marginBottom: 5,
         backgroundColor: "#f0f0f0",
         borderRadius: 8,
         height: 50,
