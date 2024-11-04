@@ -1,9 +1,9 @@
-import { createBottomTabNavigator, createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Feather } from "react-native-vector-icons";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import LoginScreen from "../pages/Login";
 import CompanyRegisterScreen from "../pages/RegisterCompany";
 import UserRegisterScreen from "../pages/RegisterUser";
+import RegisterRecyclePoints from "../pages/company/RegisterRecyclePoints";
 
 import TabRoutes from "./tab.routes";
 import TabRoutesCompany from "./tabCompany.routes";
@@ -21,12 +21,17 @@ export default function StackRoutes() {
             <Stack.Screen
                 name="CompanyRegister"
                 component={CompanyRegisterScreen}
-                options={{ title: "Cadastro de Usuário" }}
+                options={{ title: "Cadastro de Empresa" }}
             />
             <Stack.Screen
                 name="UserRegister"
                 component={UserRegisterScreen}
-                options={{ title: "Cadastro de Empresa" }}
+                options={{ title: "Cadastro de Usuário" }}
+            />
+            <Stack.Screen
+                name="RegisterRecyclePoints"
+                component={RegisterRecyclePoints}
+                options={{ title: "Novo Ponto de coleta" }}
             />
             <Stack.Screen name="HomeUser" component={TabRoutes} options={{ headerShown: false }}/>
 

@@ -1,9 +1,9 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Feather } from "react-native-vector-icons";
+import { Feather, FontAwesome } from "react-native-vector-icons";
 
-import Points from "../pages/Points"
-import Profile from "../pages/Profile"
-
+import RecyclingPoints from "../pages/user/RecyclingPoints";
+import Home from "../pages/user/Home";
+import Profile from "../pages/user/Profile";
 
 const Tab = createBottomTabNavigator();
 
@@ -12,21 +12,28 @@ export default function TabRoutes() {
         <Tab.Navigator screenOptions={{ headerShown: false }}>
             <Tab.Screen
                 name="Pontos"
-                component={Points}
+                component={RecyclingPoints}
                 options={{
                     tabBarIcon: ({ color, size }) => <Feather name="home" color={color} size={size} />,
-                    tabBarLabel: "Inicio"
+                    tabBarLabel: "Pontos de coleta",
+                }}
+            />
+            <Tab.Screen
+                name="Meus pontos"
+                component={Home}
+                options={{
+                    tabBarIcon: ({ color, size }) => <FontAwesome name="recycle" color={color} size={size} />,
+                    tabBarLabel: "Meus pontos",
                 }}
             />
             <Tab.Screen
                 name="Perfil"
                 component={Profile}
-                headerShown={true}
                 options={{
                     tabBarIcon: ({ color, size }) => <Feather name="user" color={color} size={size} />,
-                    tabBarLabel: "Perfil"
+                    tabBarLabel: "Perfil",
                 }}
             />
         </Tab.Navigator>
-    )
+    );
 }

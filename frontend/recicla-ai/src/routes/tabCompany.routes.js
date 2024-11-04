@@ -1,8 +1,8 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Feather } from "react-native-vector-icons";
 
-import Points from "../pages/Points"
-import Profile from "../pages/Profile"
+import Points from "../pages/company/MyPoints"
+import Profile from "../pages/user/Profile"
 import RegisterPoints from "../pages/company/RegisterPoints";
 
 

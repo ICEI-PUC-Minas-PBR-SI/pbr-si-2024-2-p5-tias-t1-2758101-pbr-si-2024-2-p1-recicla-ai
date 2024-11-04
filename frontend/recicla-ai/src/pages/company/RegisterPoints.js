@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Alert, ScrollView } from "react-native";
-import { Text, TextInput, Button, Title, Paragraph, PaperProvider } from "react-native-paper";
+import { StyleSheet, Alert, ScrollView } from "react-native";
+import { Title, Paragraph, PaperProvider } from "react-native-paper";
 import { Formik } from "formik";
 import * as Yup from "yup";
 
@@ -9,26 +9,26 @@ import ErrorMessage from "../../components/ErrorMessageFormik";
 import { formatCPF } from "../../utils/format";
 import CustomButton from "../../components/CustomButton";
 
-const validarCPF = (cpf) => {
+const validateDocument = (document) => {
     const regex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
-    return regex.test(cpf);
+    return regex.test(document);
 };
 
-const RegisterPoints = () => {
+const RegisterPoints = ({ navigation }) => {
 
     const handleRegisterCompany = (values, actions) => {
-        const pontosASeremAdicionados = Number(values.points);
-        const cpfFormatado = values.cpf;
+        const addPoints = Number(values.points);
+        const formattedCpf = values.cpf;
     
         // Fazer req;
         actions.resetForm();
-        Alert.alert("Sucesso", `${pontosASeremAdicionados} pontos adicionados para o usuário com CPF: ${cpfFormatado}`);
+        Alert.alert("Sucesso", `${addPoints} pontos adicionados para o usuário com CPF: ${formattedCpf}`);
     };
 
     const validationSchema = Yup.object().shape({
         cpf: Yup.string()
             .required("Campo obrigatório")
-            .test("valid-cpf", "CPF inválido. Use o formato 000.000.000-00", validarCPF),
+            .test("valid-cpf", "CPF inválido. Use o formato 000.000.000-00", validateDocument),
         points: Yup.number()
             .typeError("Por favor, insira um número válido")
             .positive("Os pontos devem ser positivos")
@@ -38,7 +38,7 @@ const RegisterPoints = () => {
     return (
         <PaperProvider style={styles.container}>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
-                <Title style={styles.title}>Adicionar Pontos</Title>
+            <Title style={styles.title}>Adicionar Pontos</Title>
                 <Formik
                     initialValues={{ cpf: "", points: "" }}
                     onSubmit={handleRegisterCompany}
@@ -53,7 +53,6 @@ const RegisterPoints = () => {
                                 value={formatCPF(values.cpf)}
                                 onChangeText={text => {
                                     if (text.length <= 14) {
-
                                         handleChange("cpf")(text);
                                     }
                                 }}
@@ -76,9 +75,7 @@ const RegisterPoints = () => {
                             />
                             <ErrorMessage error={errors.points} />
 
-
                             <CustomButton onPress={handleSubmit} title="Registrar" />
-
                         </>
                     )}
                 </Formik>
@@ -88,7 +85,7 @@ const RegisterPoints = () => {
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, },
+    container: { flex: 1 },
     scrollContainer: {
         flexGrow: 1,
         justifyContent: "center",
@@ -99,7 +96,8 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         fontWeight: "bold",
-        marginBottom: 20,
+        marginBottom: 30,
+        textAlign: "center",
     },
     label: {
         fontSize: 16,
