@@ -6,8 +6,9 @@ import * as Yup from "yup";
 
 import CustomTextInput from "../../components/CustomTextInput";
 import ErrorMessage from "../../components/ErrorMessageFormik";
-import { formatCPF } from "../../utils/format";
+import {formatCPF, formatNoDots} from "../../utils/format";
 import CustomButton from "../../components/CustomButton";
+import api from "../../services/api";
 
 const validateDocument = (document) => {
     const regex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
@@ -21,6 +22,27 @@ const RegisterPoints = ({ navigation }) => {
         const formattedCpf = values.cpf;
     
         // Fazer req;
+
+            try {
+                console.log(values)
+                const response = api.post(`/points`, values)
+                    .then(response => {
+                        console.log(response);
+                        console.log(response.data);
+                        Alert.alert("Pontos adicionados com sucesso!");
+                        navigation.goBack()
+                    })
+                    .catch(error => {
+                        Alert.alert("Erro ao criar conta!");
+                        if (error.response) {
+                            console.error("Erro na resposta:", error.response.data);
+                        }
+                    });
+            } catch (e) {
+                console.log(e);
+            }
+
+
         actions.resetForm();
         Alert.alert("Sucesso", `${addPoints} pontos adicionados para o usuário com CPF: ${formattedCpf}`);
     };

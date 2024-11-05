@@ -17,7 +17,7 @@ const RegisterSchema = Yup.object().shape({
     phoneNumber: Yup.string().required("O número de telefone é obrigatório").length(14, "Verifique se o número de telefone informado está correto"),
     cnpj: Yup.string().required("O CNPJ é obrigatório").length(18, "Verifique se o CNPJ informado está correto"),
     postal_code: Yup.string().required("O CEP é obrigatório"),
-    number: Yup.string().required("O número é obrigatório"),
+    addressNumber: Yup.string().required("O número é obrigatório"),
     password: Yup.string().min(6, "A senha deve ter pelo menos 6 caracteres").required("A senha é obrigatória"),
     confirmPassword: Yup.string()
         .oneOf([Yup.ref("password"), null], "As senhas não coincidem")
@@ -35,13 +35,13 @@ const RegisterUser = ({ navigation }) => {
         values.cnpj = formatNoDots(values.cnpj);
         values.phoneNumber = formatNoDots(values.phoneNumber);
 
-        try {
-            const response = values;
 
-            values.cpf = formatNoDots(values.cpf);
+            // const response = values;
+
+            // values.cpf = formatNoDots(values.cpf);
             values.phoneNumber = formatNoDots(values.phoneNumber);
             try {
-
+                console.log(values)
                 const response = api.post(`/company`, values)
                     .then(response => {
                         console.log(response);
@@ -59,21 +59,6 @@ const RegisterUser = ({ navigation }) => {
                 console.log(e);
             }
 
-
-            // await api.post(`/registercompany`,values);
-            if (response) {
-                Alert.alert(
-                    "Conta criada com sucesso!",
-
-                );
-                navigation.goBack();
-            }
-            else {
-                Alert.alert("Erro ao criar conta!");
-            }
-        } catch (e) {
-            console.log(e);
-        }
     };
 
 
@@ -116,7 +101,7 @@ const RegisterUser = ({ navigation }) => {
                         postal_code: "",
                         password: "",
                         confirmPassword: "",
-                        number: "",
+                        addressNumber: "",
                         // recyclingPreferences: []
                     }}
                     validationSchema={RegisterSchema}
@@ -193,12 +178,12 @@ const RegisterUser = ({ navigation }) => {
 
                             <CustomTextInput
                                 label="Número"
-                                value={values.number}
-                                onChangeText={handleChange("number")}
-                                onBlur={handleBlur("number")}
+                                value={values.addressNumber}
+                                onChangeText={handleChange("addressNumber")}
+                                onBlur={handleBlur("addressNumber")}
                                 keyboardType={"phone-pad"}
                             />
-                            <ErrorMessage error={errors.number} />
+                            <ErrorMessage error={errors.addressNumber} />
 
                             <Text>Materiais recicláveis permitidos</Text>
                             <Menu

@@ -15,56 +15,35 @@ const RegisterSchema = Yup.object().shape({
     name: Yup.string().required("O nome é obrigatório"),
     phoneNumber: Yup.string().required("O número de telefone é obrigatório").length(14, "Verifique se o número de telefone informado está correto"),
     postal_code: Yup.string().required("O CEP é obrigatório"),
-    number: Yup.string().required("O número é obrigatório"),
+    addressNumber: Yup.string().required("O número é obrigatório"),
     recyclingPreferences: Yup.array().required("Selecione um ou mais materiais recicláveis que sua empresa aceitará."),
 });
 
 const RegisterRecyclePoints = ({ navigation }) => {
+    console.log()
     const [visible, setVisible] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [address, setAddress] = useState("");
 
     async function handleRegisterCompany(values) {
-        values.cnpj = formatNoDots(values.cnpj);
-        values.phoneNumber = formatNoDots(values.phoneNumber);
-
+        console.log(values)
+        //values.phoneNumber = formatNoDots(values.phoneNumber);
         try {
-            const response = values;
-
-            values.cpf = formatNoDots(values.cpf);
-            values.phoneNumber = formatNoDots(values.phoneNumber);
-            try {
-
-                const response = api.post(`/company`, values)
-                    .then(response => {
-                        console.log(response);
-                        console.log(response.data);
-                        Alert.alert("Conta criada com sucesso!");
-                        navigation.goBack()
-                    })
-                    .catch(error => {
-                        Alert.alert("Erro ao criar conta!");
-                        if (error.response) {
-                            console.error("Erro na resposta:", error.response.data);
-                        }
-                    });
-            } catch (e) {
-                console.log(e);
-            }
-
-
-            // await api.post(`/registercompany`,values);
-            if (response) {
-                Alert.alert(
-                    "Conta criada com sucesso!",
-
-                );
-                navigation.goBack();
-            }
-            else {
-                Alert.alert("Erro ao criar conta!");
-            }
+            console.log(values)
+            const response = api.post(`/recycle`, values)
+                .then(response => {
+                    console.log(response);
+                    console.log(response.data);
+                    Alert.alert("Ponto criada com sucesso!");
+                    navigation.goBack()
+                })
+                .catch(error => {
+                    Alert.alert("Erro ao criar conta!");
+                    if (error.response) {
+                        console.error("Erro na resposta:", error.response.data);
+                    }
+                });
         } catch (e) {
             console.log(e);
         }
@@ -106,7 +85,7 @@ const RegisterRecyclePoints = ({ navigation }) => {
                         name: "",
                         phoneNumber: "",
                         postal_code: "",
-                        number: "",
+                        addressNumber: "",
                         // recyclingPreferences: []
                     }}
                     validationSchema={RegisterSchema}
@@ -161,12 +140,12 @@ const RegisterRecyclePoints = ({ navigation }) => {
 
                             <CustomTextInput
                                 label="Número"
-                                value={values.number}
-                                onChangeText={handleChange("number")}
-                                onBlur={handleBlur("number")}
+                                value={values.addressNumber}
+                                onChangeText={handleChange("addressNumber")}
+                                onBlur={handleBlur("addressNumber")}
                                 keyboardType={"phone-pad"}
                             />
-                            <ErrorMessage error={errors.number} />
+                            <ErrorMessage error={errors.addressNumber} />
 
                             <Text>Materiais recicláveis permitidos</Text>
                             <Menu
