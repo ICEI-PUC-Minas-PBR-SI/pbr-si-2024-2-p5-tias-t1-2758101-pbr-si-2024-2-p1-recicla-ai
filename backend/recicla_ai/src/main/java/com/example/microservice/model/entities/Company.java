@@ -14,7 +14,7 @@ public class Company {
     @Nonnull
     private String name;
     private String email;
-    private String document;
+    private String cnpj;
     private String phoneNumber;
     private String postalCode;
     private String password;
@@ -22,11 +22,11 @@ public class Company {
 
     public Company(){}
 
-    public Company(String name, String email, String document, String phoneNumber, String postalCode,String addressNumber, String password){
+    public Company(String name, String email, String cnpj, String phoneNumber, String postalCode,String addressNumber, String password){
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
-        this.document = document;
+        this.cnpj = cnpj;
         this.postalCode = postalCode;
         this.password = password;
         this.addressNumber = addressNumber;
@@ -35,7 +35,7 @@ public class Company {
     public Company(CompanyRecord company) {
         this.name = company.name();
         this.email = company.email();
-        this.document = company.document();
+        this.cnpj = company.cnpj();
         this.phoneNumber = company.phoneNumber();
         this.postalCode = company.postalCode();
         this.password = company.password();
@@ -65,12 +65,12 @@ public class Company {
         this.email = email;
     }
 
-    public String getDocument() {
-        return document;
+    public String getCnpj() {
+        return cnpj;
     }
 
-    public void setDocument(String document) {
-        this.document = document;
+    public void setCnpj(String cnpj) {
+        this.cnpj = cnpj;
     }
 
     public String getPhoneNumber() {

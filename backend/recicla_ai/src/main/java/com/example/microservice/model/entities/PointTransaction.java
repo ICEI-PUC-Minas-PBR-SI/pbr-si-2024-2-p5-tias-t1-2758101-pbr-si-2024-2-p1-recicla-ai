@@ -16,14 +16,16 @@ public class PointTransaction {
     private String quantity;
     private String transaction_date;
     private String company_id;
+    private String cpf;
     private String recycle_address_id;
 
     public PointTransaction(){}
 
-    public PointTransaction(String document, String quantity, String transaction_date, String company_id, String recycle_address_id) {
+    public PointTransaction(String document, String quantity, String transaction_date, String company_id, String cpf,String recycle_address_id) {
         this.document = document;
         this.quantity = quantity;
         this.transaction_date = transaction_date;
+        this.cpf = cpf;
         this.company_id = company_id;
         this.recycle_address_id = recycle_address_id;
     }
@@ -31,6 +33,7 @@ public class PointTransaction {
     public PointTransaction(PointTransactionRecord pointTransaction) {
         this.document = pointTransaction.document();
         this.quantity = pointTransaction.quantity();
+        this;cpf = pointTransaction.cpf();
         this.transaction_date = pointTransaction.transaction_date();
         this.company_id = pointTransaction.company_id();
         this.recycle_address_id = pointTransaction.recycle_address_id();
@@ -67,6 +70,14 @@ public class PointTransaction {
 
     public void setTransaction_date(String transaction_date) {
         this.transaction_date = transaction_date;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void getCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public String getCompany_id() {

@@ -19,7 +19,7 @@ const Login = ({ navigation }) => {
 
     const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
 
-    async function handleLogin(values) {
+    async function handleLogin(values, actions) {
         try {
             const response = values;
             let apiUrl;
@@ -34,9 +34,11 @@ const Login = ({ navigation }) => {
 
             if (response) {
                 if (values.email == "teste@gmail" && values.password == "abcd" && !isSwitchOn) {
+                    actions.resetForm();
                     navigation.navigate("HomeUser");
                 }
                 else if(values.email == "testecompany@gmail" && values.password == "abcd" && isSwitchOn){
+                    actions.resetForm();
                     navigation.navigate("HomeCompany");
                 }
                 else {
@@ -54,9 +56,10 @@ const Login = ({ navigation }) => {
     return (
         <Formik
             initialValues={{ email: "", password: "" }}
-            onSubmit={values => handleLogin(values)}
+            onSubmit={(values, actions) => handleLogin(values, actions)}
             validationSchema={LoginSchema}
             validateOnBlur={false}
+            validateOnChange={false}
         >
             {({ handleChange, handleBlur, handleSubmit, values, errors, touched, resetForm }) => (
                 <View style={styles.container}>

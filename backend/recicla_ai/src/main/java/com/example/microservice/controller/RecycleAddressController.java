@@ -20,4 +20,9 @@ public class RecycleAddressController {
         this.recycleAddressRepo.save(recycleAddress);
         return recycleAddress;
     }
+
+    @GetMapping
+    public Iterable<RecycleAddress> allRecycleAddress(){
+        return recycleAddressRepo.findAll();
+    }
 }

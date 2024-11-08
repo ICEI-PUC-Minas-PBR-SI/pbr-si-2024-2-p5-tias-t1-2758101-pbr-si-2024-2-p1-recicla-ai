@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Alert, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, ActivityIndicator, Modal } from "react-native";
 import { TextInput, Button, Text, Menu, Provider as PaperProvider } from "react-native-paper";
 import CustomButton from "../components/CustomButton";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -7,19 +7,22 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import * as Yup from "yup";
 import { formatPhoneNumber, formatCPF, formatNoDots } from "../utils/format";
+import { validateCpf, validatePhoneNumber } from "../utils/validations";
 import CustomTextInput from "../components/CustomTextInput";
 import { Formik } from "formik";
 import ErrorMessage from "../components/ErrorMessageFormik";
-import api from "../services/api";
 import materials from "../utils/materials";
-
+import { makePostRequest } from "../services/apiRequests";
+import LoadingModal from "../components/LoadingModal";
 
 const RegisterSchema = Yup.object().shape({
     name: Yup.string().required("O nome é obrigatório"),
     email: Yup.string().email("Digite um e-mail válido").required("O e-mail é obrigatório"),
-    cpf: Yup.string().required("O CPF é obrigatório").length(14, "Verifique se o CPF informado está correto"),
+    cpf: Yup.string().required("O CPF é obrigatório").test("valid-cpf", "CPF inválido. Use o formato 000.000.000-00", validateCpf),
     password: Yup.string().min(6, "A senha deve ter pelo menos 6 caracteres").required("A senha é obrigatória"),
-    phoneNumber: Yup.string().required("O número de telefone é obrigatório").length(14, "Verifique se o número de telefone informado está correto"),
+    phoneNumber: Yup.string()
+        .required("O número de telefone é obrigatório")
+        .test("valid-phone", "Número de telefone inválido. Use o formato (00) 00000-0000", validatePhoneNumber),
     birthdate: Yup.date().required("A data de nascimento é obrigatória").max(new Date(), "A data de nascimento não pode ser igual ou posterior à data atual"),
     confirmPassword: Yup.string()
         .oneOf([Yup.ref("password"), null], "As senhas não coincidem")
@@ -28,34 +31,25 @@ const RegisterSchema = Yup.object().shape({
 });
 
 const RegisterUser = ({ navigation }) => {
-
     const [visible, setVisible] = useState(false);
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-    async function handleRegister(values) {
+    async function handleRegisterUser(values) {
         values.cpf = formatNoDots(values.cpf);
         values.phoneNumber = formatNoDots(values.phoneNumber);
         try {
-
-            const response = api.post(`/user`, values)
-                .then(response => {
-                    console.log(response);
-                    console.log(response.data);
-                    Alert.alert("Conta criada com sucesso!");
-                    navigation.goBack()
-                })
-                .catch(error => {
-                    Alert.alert("Erro ao criar conta!");
-                    if (error.response) {
-                        console.error("Erro na resposta:", error.response.data);
-                    }
-                });
+            setLoading(true);
+            await makePostRequest("user", values);
+            navigation.goBack();
         } catch (e) {
-            console.log(e);
+            console.error("Erro ao registrar usuário:", e);
+        } finally {
+            setLoading(false);
         }
-    };
+    }
 
     const openMenu = () => setVisible(true);
     const closeMenu = () => setVisible(false);
@@ -90,9 +84,8 @@ const RegisterUser = ({ navigation }) => {
                         birthdate: new Date(),
                     }}
                     validationSchema={RegisterSchema}
-                    onSubmit={handleRegister}
+                    onSubmit={handleRegisterUser}
                     validateOnChange={false}
-
                 >
                     {({ handleChange, handleBlur, handleSubmit, values, errors, setFieldValue }) => (
                         <View style={styles.formContainer}>
@@ -118,7 +111,6 @@ const RegisterUser = ({ navigation }) => {
                                 value={formatCPF(values.cpf)}
                                 onChangeText={text => {
                                     if (text.length <= 14) {
-
                                         handleChange("cpf")(text);
                                     }
                                 }}
@@ -131,8 +123,9 @@ const RegisterUser = ({ navigation }) => {
                                 label="Telefone"
                                 value={formatPhoneNumber(values.phoneNumber)}
                                 onChangeText={text => {
-                                    if (text.length <= 15) {
-                                        handleChange("phoneNumber")(text);
+                                    const cleanedText = text.replace(/\D/g, "");
+                                    if (cleanedText.length <= 11) {
+                                        handleChange("phoneNumber")(cleanedText);
                                     }
                                 }}
                                 onBlur={handleBlur("phoneNumber")}
@@ -168,7 +161,6 @@ const RegisterUser = ({ navigation }) => {
                                     ))}
                                 </ScrollView>
                             </Menu>
-
                             <ErrorMessage error={errors.recyclePreference} />
 
                             <TextInput
@@ -183,7 +175,6 @@ const RegisterUser = ({ navigation }) => {
                                 />}
                                 mode="outlined"
                             />
-
                             <ErrorMessage error={errors.password} />
 
                             <TextInput
@@ -204,6 +195,8 @@ const RegisterUser = ({ navigation }) => {
                         </View>
                     )}
                 </Formik>
+
+                <LoadingModal visible={loading} />
             </ScrollView>
         </PaperProvider>
     );
@@ -233,26 +226,24 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     menuButton: {
-        color: "#000000",
-        borderRadius: 8,
         marginTop: 8,
-        marginBottom: 15
-    },
-    menuScroll: {
         backgroundColor: "#f0f0f0",
-        maxHeight: 200,
+        borderRadius: 8,
+        height: 50,
+        justifyContent: "center",
     },
     menuStyle: {
-        backgroundColor: "#f0f0f0",
-        color: "#000000",
-        borderRadius: 8,
-        marginBottom: 10,
+        width: 300,
     },
-    error: {
-        color: "red",
-        marginBottom: 10,
+    menuScroll: {
+        maxHeight: 200,
     },
-
+    modalBackground: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+    },
 });
 
 export default RegisterUser;

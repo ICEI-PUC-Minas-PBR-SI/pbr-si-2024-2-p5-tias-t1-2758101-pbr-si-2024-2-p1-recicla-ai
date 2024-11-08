@@ -3,6 +3,7 @@ import { Feather, FontAwesome } from "react-native-vector-icons";
 
 import RecyclingPoints from "../pages/user/RecyclingPoints";
 import Home from "../pages/user/Home";
+import Shopping from "../pages/user/Shopping";
 import Profile from "../pages/user/Profile";
 
 const Tab = createBottomTabNavigator();
@@ -20,7 +21,7 @@ export default function TabRoutes() {
             />
             <Tab.Screen
                 name="Meus pontos"
-                component={Home}
+                component={Shopping}
                 options={{
                     tabBarIcon: ({ color, size }) => <FontAwesome name="recycle" color={color} size={size} />,
                     tabBarLabel: "Meus pontos",

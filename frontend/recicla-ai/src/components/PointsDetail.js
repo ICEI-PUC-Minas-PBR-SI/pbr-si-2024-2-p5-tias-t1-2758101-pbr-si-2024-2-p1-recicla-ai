@@ -2,14 +2,14 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Text } from "react-native-paper";
 
-const PointsDetail = ({ name, postalCode, phone, allowedMaterials }) => {
+const PointsDetail = ({ name, postalCode, phoneNumber, recyclePreference }) => {
     return (
         <View style={styles.pointContainer}>
             <Text style={styles.pointName}>{name}</Text>
             <Text style={styles.detail}>CEP: {postalCode}</Text>
-            <Text style={styles.detail}>Telefone: {phone}</Text>
+            <Text style={styles.detail}>Telefone: {phoneNumber}</Text>
             <Text style={styles.detail}>
-                Materiais Permitidos: {allowedMaterials.join(", ")}
+                Materiais Permitidos: {recyclePreference}
             </Text>
         </View>
     );

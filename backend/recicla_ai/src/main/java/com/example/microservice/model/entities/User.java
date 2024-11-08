@@ -15,6 +15,7 @@ public class User {
     @Nonnull
     private String name;
     private String email;
+    private String cpf;
     private String birthdate;
     private String phoneNumber;
     private String recyclePreference;
@@ -22,9 +23,10 @@ public class User {
 
     public User(){}
 
-    public User(String name, String email, String birthdate, String phoneNumber, String recyclePreference, String password){
+    public User(String name, String email, String cpf, String birthdate, String phoneNumber, String recyclePreference, String password){
         this.name = name;
         this.email = email;
+        this.cpf = cpf;
         this.birthdate = birthdate;
         this.phoneNumber = phoneNumber;
         this.recyclePreference = recyclePreference;
@@ -34,6 +36,7 @@ public class User {
     public User(UserRecord user) {
         this.name = user.name();
         this.email = user.email();
+        this.cpf = user.cpf();
         this.birthdate = user.birthdate();
         this.phoneNumber = user.phoneNumber();
         this.recyclePreference = user.recyclePreference();
@@ -62,6 +65,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public String getBirthdate() {

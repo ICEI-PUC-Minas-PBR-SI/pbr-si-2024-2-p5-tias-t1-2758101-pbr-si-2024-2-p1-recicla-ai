@@ -1,16 +1,12 @@
-import React, { useState } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
-import { PaperProvider, FAB, Menu, IconButton } from "react-native-paper";
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, ScrollView, Modal, ActivityIndicator } from "react-native";
+import { PaperProvider, FAB, Menu, IconButton, Text } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import PointsDetail from "../../components/PointsDetail";
 import CustomTextInput from "../../components/CustomTextInput";
+import { makePostRequest, makeGetRequest } from "../../services/apiRequests";
+import LoadingModal from "../../components/LoadingModal";
 
-const recyclePoints = [
-  { id: "1", name: "Ponto de Coleta A", postalCode: "12345-678", phone: "31 912342421", materials: ["Papel", "Plástico"] },
-  { id: "2", name: "Ponto de Coleta B", postalCode: "23456-789", phone: "31 912342421", materials: ["Metal", "Papel"] },
-  { id: "3", name: "Ponto de Coleta C", postalCode: "34567-890", phone: "31 912342421", materials: ["Vidro", "Plástico"] },
-  { id: "4", name: "Ponto de Coleta D", postalCode: "12345-128", phone: "31 912342421", materials: ["Papel", "Vidro"] },
-];
 
 const materialsOptions = ["todos", "Papel", "Plástico", "Vidro", "Metal", "Óleo", "Eletrônicos", "Tecido", "Resíduos Orgânicos"];
 
@@ -18,13 +14,31 @@ const MyPointsRecycleCompany = () => {
   const navigation = useNavigation();
   const [filter, setFilter] = useState("");
   const [selectedMaterial, setSelectedMaterial] = useState("todos");
+  const [recyclePoints, setRecyclePoints] = useState([]);
   const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const filteredPoints = recyclePoints.filter(point => {
+  const filteredPoints = recyclePoints.filter((point) => {
     const matchesFilter = point.name.toLowerCase().includes(filter.toLowerCase());
-    const matchesMaterial = selectedMaterial === "todos" || point.materials.includes(selectedMaterial);
+    const matchesMaterial =
+      selectedMaterial === "todos" || (point.recyclePreference?.includes(selectedMaterial) ?? false);
     return matchesFilter && matchesMaterial;
   });
+
+  useEffect(() => {
+    const fetchRecyclePoints = async () => {
+      try {
+        const response = await makeGetRequest("recycle");
+        setRecyclePoints(response || []);
+      } catch (err) {
+        console.error("Erro ao carregar os pontos de coleta.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecyclePoints();
+  }, []);
 
   return (
     <PaperProvider style={styles.container}>
@@ -41,35 +55,43 @@ const MyPointsRecycleCompany = () => {
             onDismiss={() => setVisible(false)}
             anchor={
               <IconButton
-                icon="filter" 
-                mode="contained"
+                icon="filter"
+                color="black"
+                mode="outlined"
                 onPress={() => setVisible(true)}
               />
             }
           >
-            {materialsOptions.map((material) => (
-              <Menu.Item
-                key={material}
-                onPress={() => {
-                  setSelectedMaterial(material);
-                  setVisible(false);
-                }}
-                title={material}
-                style={selectedMaterial === material ? styles.selectedItem : null}
-              />
-            ))}
+            <ScrollView style={styles.menuScroll}>
+              {materialsOptions.map((material) => (
+                <Menu.Item
+                  key={material}
+                  onPress={() => {
+                    setSelectedMaterial(material);
+                    setVisible(false);
+                  }}
+                  title={material}
+                  style={selectedMaterial === material ? styles.selectedItem : null}
+                />
+              ))}
+            </ScrollView>
           </Menu>
         </View>
-
-        {filteredPoints.map((point) => (
-          <PointsDetail
-            key={point.id}
-            name={point.name}
-            postalCode={point.postalCode}
-            phone={point.phone}
-            allowedMaterials={point.materials}
-          />
-        ))}
+        {loading ? (
+          <LoadingModal visible={loading} />
+        ) : filteredPoints.length === 0 ? (
+          <Text style={styles.noPointsText}>Nenhum ponto de coleta foi encontrado</Text>
+        ) : (
+          filteredPoints.map((point) => (
+            <PointsDetail
+              key={point.id}
+              name={point.name}
+              postalCode={point.postalCode}
+              phoneNumber={point.phoneNumber}
+              recyclePreference={point.recyclePreference}
+            />
+          ))
+        )}
       </ScrollView>
       <FAB
         icon="plus"
