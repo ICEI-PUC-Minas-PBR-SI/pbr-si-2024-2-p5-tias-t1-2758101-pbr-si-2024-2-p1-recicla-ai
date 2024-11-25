@@ -8,6 +8,8 @@ frontend/recicla-ai/.expo/
 frontend/recicla-ai/dist/
 frontend/recicla-ai/web-build/
 
+backend/recicla_ai/.idea
+.idea/
 # Native
 *.orig.*
 *.jks
