@@ -12,17 +12,16 @@ public class PointTransaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Nonnull
-    private String document;
+    private String cpf;
     private String quantity;
     private String transaction_date;
     private String company_id;
-    private String cpf;
     private String recycle_address_id;
 
     public PointTransaction(){}
 
-    public PointTransaction(String document, String quantity, String transaction_date, String company_id, String cpf,String recycle_address_id) {
-        this.document = document;
+    public PointTransaction(String quantity, String transaction_date, String company_id, String cpf,String recycle_address_id) {
+        this.cpf = cpf;
         this.quantity = quantity;
         this.transaction_date = transaction_date;
         this.cpf = cpf;
@@ -31,9 +30,9 @@ public class PointTransaction {
     }
 
     public PointTransaction(PointTransactionRecord pointTransaction) {
-        this.document = pointTransaction.document();
+        this.cpf = pointTransaction.cpf();
         this.quantity = pointTransaction.quantity();
-        this;cpf = pointTransaction.cpf();
+        this.cpf = pointTransaction.cpf();
         this.transaction_date = pointTransaction.transaction_date();
         this.company_id = pointTransaction.company_id();
         this.recycle_address_id = pointTransaction.recycle_address_id();
@@ -49,11 +48,11 @@ public class PointTransaction {
 
     @Nonnull
     public String getUser_id() {
-        return document;
+        return cpf;
     }
 
-    public void setUser_id(@Nonnull String document) {
-        this.document = document;
+    public void setUser_id(@Nonnull String cpf) {
+        this.cpf = cpf;
     }
 
     public String getQuantity() {

@@ -15,7 +15,7 @@ import LoadingModal from "../../components/LoadingModal";
 const RegisterSchema = Yup.object().shape({
     name: Yup.string().required("O nome é obrigatório"),
     phoneNumber: Yup.string().required("O número de telefone é obrigatório").test("valid-phone", "Número de telefone inválido. Use o formato (00) 00000-0000", validatePhoneNumber),
-    postal_code: Yup.string().required("O CEP é obrigatório"),
+    postalCode: Yup.string().required("O CEP é obrigatório"),
     addressNumber: Yup.string().required("O número é obrigatório"),
     recyclingPreferences: Yup.array().required("Selecione um ou mais materiais recicláveis que sua empresa aceitará."),
 });
@@ -78,7 +78,7 @@ const RegisterRecyclePoints = ({ navigation }) => {
                         company_id: 1,
                         name: "",
                         phoneNumber: "",
-                        postal_code: "",
+                        postalCode: "",
                         addressNumber: "",
                         // recyclingPreferences: []
                     }}
@@ -114,18 +114,18 @@ const RegisterRecyclePoints = ({ navigation }) => {
 
                             <CustomTextInput
                                 label="CEP"
-                                value={values.postal_code}
-                                onBlur={handleBlur("postal_code")}
+                                value={values.postalCode}
+                                onBlur={handleBlur("postalCode")}
                                 keyboardType={"phone-pad"}
                                 onChangeText={text => {
-                                    handleChange("postal_code")(text);
+                                    handleChange("postalCode")(text);
                                     if (text.length === 8) {
                                         fetchAddress(text);
                                     }
                                 }
                                 }
                             />
-                            <ErrorMessage error={errors.postal_code} />
+                            <ErrorMessage error={errors.postalCode} />
 
                             <CustomTextInput
                                 label="Endereço"

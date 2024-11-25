@@ -49,7 +49,7 @@ const Login = ({ navigation }) => {
                 Alert.alert("Erro ao entrar no aplicativo!");
             }
         } catch (e) {
-            console.log(e);
+            console.trace('erro: '+e);
         }
     };
 

@@ -6,7 +6,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "companies")
+@Table(name = "companys")
 public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,18 +16,18 @@ public class Company {
     private String email;
     private String cnpj;
     private String phoneNumber;
-    private String postalCode;
+    private String postal_code;
     private String password;
     private String addressNumber;
 
     public Company(){}
 
-    public Company(String name, String email, String cnpj, String phoneNumber, String postalCode,String addressNumber, String password){
+    public Company(String name, String email, String cnpj, String phoneNumber, String postal_code,String addressNumber, String password){
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.cnpj = cnpj;
-        this.postalCode = postalCode;
+        this.postal_code = postal_code;
         this.password = password;
         this.addressNumber = addressNumber;
     }
@@ -37,7 +37,7 @@ public class Company {
         this.email = company.email();
         this.cnpj = company.cnpj();
         this.phoneNumber = company.phoneNumber();
-        this.postalCode = company.postalCode();
+        this.postal_code = company.postal_code();
         this.password = company.password();
     }
 
@@ -82,11 +82,11 @@ public class Company {
     }
 
     public String getPostalCode() {
-        return postalCode;
+        return postal_code;
     }
 
-    public void setPostalCode(String postalCode) {
-        this.postalCode = postalCode;
+    public void setPostalCode(String postal_code) {
+        this.postal_code = postal_code;
     }
 
     public String getPassword() {
