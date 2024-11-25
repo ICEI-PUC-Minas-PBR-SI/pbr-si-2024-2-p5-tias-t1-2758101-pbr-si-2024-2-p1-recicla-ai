@@ -24,13 +24,11 @@ public class PointTransaction {
         this.cpf = cpf;
         this.quantity = quantity;
         this.transaction_date = transaction_date;
-        this.cpf = cpf;
         this.company_id = company_id;
         this.recycle_address_id = recycle_address_id;
     }
 
     public PointTransaction(PointTransactionRecord pointTransaction) {
-        this.cpf = pointTransaction.cpf();
         this.quantity = pointTransaction.quantity();
         this.cpf = pointTransaction.cpf();
         this.transaction_date = pointTransaction.transaction_date();
