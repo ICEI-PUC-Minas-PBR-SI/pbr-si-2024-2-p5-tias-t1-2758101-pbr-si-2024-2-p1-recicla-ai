@@ -20,6 +20,7 @@ public class User {
     private String phoneNumber;
     private String recyclePreference;
     private String password;
+    private String points;
 
     public User(){}
 
@@ -98,7 +99,21 @@ public class User {
     public void setRecyclePreference(String recyclePreference) {
         this.recyclePreference = recyclePreference;
     }
+    public String getPoints() {
+        return points;
+    }
 
+    public void setPoints(String points) {
+        try {
+            int actualPoints = Integer.parseInt(this.points);
+            int newPoints = actualPoints + Integer.parseInt(points);
+            this.points = String.valueOf(newPoints);
+        }
+        catch (NumberFormatException e) {
+            return;
+        }
+
+    }
     public String getPassword() {
         return password;
     }

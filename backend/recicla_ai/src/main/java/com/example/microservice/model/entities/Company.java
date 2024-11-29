@@ -6,7 +6,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "companys")
+@Table(name = "companies")
 public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

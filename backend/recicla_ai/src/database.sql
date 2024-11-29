@@ -1,4 +1,4 @@
-create table microservice.users
+create table if not exists microservice.users
 (
     name               varchar(255) null,
     id                 int auto_increment primary key,
@@ -11,7 +11,7 @@ create table microservice.users
     password           varchar(255) null
 );
 
-create table microservice.companies
+create table if not exists microservice.companies
 (
     name           varchar(255) null,
     email          varchar(255) null,
@@ -23,7 +23,7 @@ create table microservice.companies
     id             int auto_increment primary key
 );
 
-create table microservice.recycle_address
+create table if not exists microservice.recycle_address
 (
     name           varchar(255) null,
     phone_number   varchar(255) null,
@@ -34,7 +34,7 @@ create table microservice.recycle_address
     company_id     int
 );
 
-CREATE TABLE products (
+CREATE TABLE if not exists products (
                           id BIGINT AUTO_INCREMENT PRIMARY KEY,
                           name VARCHAR(255) NOT NULL,
                           value VARCHAR(255),
@@ -43,7 +43,7 @@ CREATE TABLE products (
                           quantity VARCHAR(255)
 );
 
-CREATE TABLE point_transaction (
+CREATE TABLE if not exists point_transaction (
                                    id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                    cpf VARCHAR(255) NOT NULL,
                                    quantity VARCHAR(255),
@@ -52,7 +52,7 @@ CREATE TABLE point_transaction (
                                    recycle_address_id VARCHAR(255)
 );
 
-CREATE TABLE orders (
+CREATE TABLE if not exists orders (
                         id BIGINT AUTO_INCREMENT PRIMARY KEY,
                         cpf VARCHAR(255) NOT NULL,
                         product_id VARCHAR(255),

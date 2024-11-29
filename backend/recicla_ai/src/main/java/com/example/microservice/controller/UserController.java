@@ -37,6 +37,17 @@ public class UserController {
         return id;
     }
 
+    @GetMapping(path = "/login/{email}-{password}")
+    public Optional<User> getUser(@PathVariable String email, @PathVariable String password) throws Exception {
+
+        Optional<User> userFound = userRepo.findByEmail(email);
+        if(userFound.isPresent() && userFound.get().getPassword().equals(password)){
+            return userFound;
+        }
+
+        throw new Exception( "Erro: Empresa não encontrada");
+    }
+
     @PutMapping(path = "/{id}")
     public User updateUser(@PathVariable Long id, @RequestBody User reqUser){
         Optional<User> optionalUser = userRepo.findById(id);

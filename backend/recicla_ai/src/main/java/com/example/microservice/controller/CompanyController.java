@@ -52,5 +52,15 @@ public class CompanyController {
         return company;
     }
 
+    @GetMapping(path = "/login/{email}-{password}")
+    public Optional<Company> getCompany(@PathVariable String email,@PathVariable String password) throws Exception {
+
+        Optional<Company> companyFound = companyRepo.findByEmail(email);
+        if(companyFound.isPresent() && companyFound.get().getPassword().equals(password)){
+            return companyFound;
+        }
+
+        throw new Exception( "Erro: Empresa não encontrada");
+    }
 
 }
