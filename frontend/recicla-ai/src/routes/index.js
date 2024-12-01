@@ -1,12 +1,22 @@
 import { NavigationContainer } from "@react-navigation/native";
-import TabRoutes from "./tab.routes";
+import TabUserRoutes from "./tabUser.routes";
+import TabCompanyRoutes from "./tabCompany.routes";
 import StackRoutes from "./stack.routes";
+import { useAuth } from "../contexts/Auth";
 
 export default function Routes() {
+    const { isAuthenticated, authType, authData } = useAuth();
+    console.log("index: " + authData);
     return (
         <NavigationContainer>
-            {/* <TabRoutes /> */}
-            <StackRoutes />
+            {authData ? (
+                authType === "company" ? (
+                    <TabCompanyRoutes />
+                ) : 
+                    <TabUserRoutes />
+            ) : (
+                <StackRoutes />
+            )}
         </NavigationContainer>
     )
 }

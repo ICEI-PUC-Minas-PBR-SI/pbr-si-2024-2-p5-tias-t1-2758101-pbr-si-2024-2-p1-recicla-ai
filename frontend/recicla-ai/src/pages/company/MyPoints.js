@@ -1,48 +1,61 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, ScrollView, Modal, ActivityIndicator } from "react-native";
-import { PaperProvider, FAB, Menu, IconButton, Text } from "react-native-paper";
-import { useNavigation } from "@react-navigation/native";
+import { View, StyleSheet, ScrollView, RefreshControl } from "react-native";
+import { PaperProvider, IconButton, Menu, Text } from "react-native-paper";
 import PointsDetail from "../../components/PointsDetail";
 import CustomTextInput from "../../components/CustomTextInput";
-import { makePostRequest, makeGetRequest } from "../../services/apiRequests";
+import { makeGetRequest } from "../../services/apiRequests";
 import LoadingModal from "../../components/LoadingModal";
-
+import { useAuth } from "../../contexts/Auth";
 
 const materialsOptions = ["todos", "Papel", "Plástico", "Vidro", "Metal", "Óleo", "Eletrônicos", "Tecido", "Resíduos Orgânicos"];
 
 const MyPointsRecycleCompany = () => {
-  const navigation = useNavigation();
+  const { authData } = useAuth();
+  const company_id = authData.id;
   const [filter, setFilter] = useState("");
   const [selectedMaterial, setSelectedMaterial] = useState("todos");
   const [recyclePoints, setRecyclePoints] = useState([]);
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   const filteredPoints = recyclePoints.filter((point) => {
     const matchesFilter = point.name.toLowerCase().includes(filter.toLowerCase());
     const matchesMaterial =
       selectedMaterial === "todos" || (point.recyclePreference?.includes(selectedMaterial) ?? false);
-    return matchesFilter && matchesMaterial;
+    const matchcompany = point.companyId == company_id;
+
+    return matchesFilter && matchesMaterial && matchcompany;
   });
 
-  useEffect(() => {
-    const fetchRecyclePoints = async () => {
-      try {
-        const response = await makeGetRequest("recycle");
-        setRecyclePoints(response || []);
-      } catch (err) {
-        console.error("Erro ao carregar os pontos de coleta.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchRecyclePoints = async () => {
+    setLoading(true);
+    try {
+      const response = await makeGetRequest("recycle");
+      setRecyclePoints(response || []);
+    } catch (err) {
+      console.error("Erro ao carregar os pontos de coleta.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchRecyclePoints();
+    setRefreshing(false);
+  };
+
+  useEffect(() => {
     fetchRecyclePoints();
   }, []);
 
   return (
     <PaperProvider style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
         <View style={styles.inputContainer}>
           <CustomTextInput
             label="Filtrar pontos de coleta..."
@@ -93,12 +106,6 @@ const MyPointsRecycleCompany = () => {
           ))
         )}
       </ScrollView>
-      <FAB
-        icon="plus"
-        style={styles.fab}
-        label="Adicionar novo ponto"
-        onPress={() => navigation.navigate("RegisterRecyclePoints")}
-      />
     </PaperProvider>
   );
 };
@@ -115,15 +122,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
   },
-  fab: {
-    position: "absolute",
-    margin: 16,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "#e0e0e0"
-  },
   selectedItem: {
     backgroundColor: "#e0e0e0",
+  },
+  noPointsText: {
+    textAlign: "center",
+    marginTop: 20,
   },
 });
 

@@ -41,6 +41,7 @@ const RegisterUser = ({ navigation }) => {
         values.cpf = formatNoDots(values.cpf);
         values.phoneNumber = formatNoDots(values.phoneNumber);
         try {
+            console.log(values);
             setLoading(true);
             await makePostRequest("user", values);
             navigation.goBack();

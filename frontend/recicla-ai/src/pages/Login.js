@@ -7,6 +7,7 @@ import ErrorMessage from "../components/ErrorMessageFormik";
 import CustomTextInput from "../components/CustomTextInput";
 import CustomButton from "../components/CustomButton";
 import colors from "../utils/colors";
+import { useAuth } from "../contexts/Auth";
 
 const LoginSchema = Yup.object().shape({
     email: Yup.string().email("Digite um e-mail válido").required("O e-mail é obrigatório"),
@@ -14,6 +15,7 @@ const LoginSchema = Yup.object().shape({
 });
 
 const Login = ({ navigation }) => {
+    const { signInUser, signInCompany, authData, authType } = useAuth();
     const [showPassword, setShowPassword] = useState(false);
     const [isSwitchOn, setIsSwitchOn] = React.useState(false);
 
@@ -21,35 +23,18 @@ const Login = ({ navigation }) => {
 
     async function handleLogin(values, actions) {
         try {
-            const response = values;
-            let apiUrl;
-
+            var response;
             if (isSwitchOn) {
-                apiUrl = `/login/company`;
+                response = signInCompany(values);
             } else {
-                apiUrl = `/login/user`;
+                response = signInUser(values);
             }
 
-            // const response = await api.post(apiUrl, values);
-
-            if (response) {
-                if (values.email == "teste@gmail" && values.password == "abcd" && !isSwitchOn) {
-                    actions.resetForm();
-                    navigation.navigate("HomeUser");
-                }
-                else if(values.email == "testecompany@gmail" && values.password == "abcd" && isSwitchOn){
-                    actions.resetForm();
-                    navigation.navigate("HomeCompany");
-                }
-                else {
-                    Alert.alert("Email ou senha estão incorretos!");
-                }
-            }
-            else {
-                Alert.alert("Erro ao entrar no aplicativo!");
+            if (!response) {
+                Alert.alert("Erro", "Falha ao realizar login!");
             }
         } catch (e) {
-            console.trace('erro: '+e);
+            console.trace("erro: " + e);
         }
     };
 

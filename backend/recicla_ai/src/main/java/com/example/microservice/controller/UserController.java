@@ -45,7 +45,7 @@ public class UserController {
             return userFound;
         }
 
-        throw new Exception( "Erro: Empresa não encontrada");
+        throw new Exception( "Erro: Usuário não encontrado");
     }
 
     @PutMapping(path = "/{id}")

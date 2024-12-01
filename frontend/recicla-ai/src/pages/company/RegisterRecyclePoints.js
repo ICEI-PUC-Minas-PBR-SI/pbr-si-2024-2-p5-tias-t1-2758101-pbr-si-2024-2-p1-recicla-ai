@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Alert, ScrollView, ActivityIndicator, Modal } from "react-native";
-import { Button, Text, Menu, Provider as PaperProvider } from "react-native-paper";
+import { Button, Text, Menu, Provider as PaperProvider, Title } from "react-native-paper";
 import CustomButton from "../../components/CustomButton";
 import * as Yup from "yup";
 import { formatPhoneNumber, formatNoDots } from "../../utils/format";
@@ -11,16 +11,20 @@ import ErrorMessage from "../../components/ErrorMessageFormik";
 import materials from "../../utils/materials";
 import { makePostRequest, makeGetRequest } from "../../services/apiRequests";
 import LoadingModal from "../../components/LoadingModal";
+import { useFocusEffect } from "@react-navigation/native"; 
+import { useAuth } from "../../contexts/Auth";
 
 const RegisterSchema = Yup.object().shape({
     name: Yup.string().required("O nome é obrigatório"),
     phoneNumber: Yup.string().required("O número de telefone é obrigatório").test("valid-phone", "Número de telefone inválido. Use o formato (00) 00000-0000", validatePhoneNumber),
     postalCode: Yup.string().required("O CEP é obrigatório"),
     addressNumber: Yup.string().required("O número é obrigatório"),
-    recyclingPreferences: Yup.array().required("Selecione um ou mais materiais recicláveis que sua empresa aceitará."),
+    recyclePreference: Yup.string().required("Selecione o material reciclável que o ponto aceitará"),
 });
 
 const RegisterRecyclePoints = ({ navigation }) => {
+    const {authData} = useAuth();
+    const company_id = authData.id;
     const [visible, setVisible] = useState(false);
     const [address, setAddress] = useState("");
     const [loading, setLoading] = useState(false);
@@ -31,7 +35,6 @@ const RegisterRecyclePoints = ({ navigation }) => {
 
         try {
             setLoading(true);
-            console.log(values);
             await makePostRequest("recycle", values);
             navigation.goBack();
         } catch (e) {
@@ -45,21 +48,23 @@ const RegisterRecyclePoints = ({ navigation }) => {
     const openMenu = () => setVisible(true);
     const closeMenu = () => setVisible(false);
 
-    const selectMaterial = (material, setFieldValue, values) => {
-        const currentPreferences = values.recyclingPreferences || [];
-        setFieldValue("recyclingPreferences", currentPreferences.includes(material)
-            ? currentPreferences.filter((m) => m !== material)
-            : [...currentPreferences, material]
-        );
+    const selectMaterial = (setFieldValue, material) => {
+        setFieldValue("recyclePreference", material);
+        closeMenu();
     };
 
-    const fetchAddress = async (cep) => {
+    const fetchAddress = async (cep, setFieldValue) => {
         try {
             const response = await makeGetRequest(`https://viacep.com.br/ws/${cep}/json/`);
-
+    
             if (!response.erro) {
-                const addrs = `${response.logradouro}, ${response.localidade}, ${response.uf}`;
-                setAddress(addrs);
+                const { logradouro, localidade, bairro, uf } = response;
+                setAddress(`${logradouro}, ${localidade}, ${uf}`);
+    
+                setFieldValue("street", logradouro);
+                setFieldValue("city", localidade);
+                setFieldValue("district", bairro);
+                setFieldValue("state", uf);
             } else {
                 setAddress("");
                 Alert.alert("Erro", "CEP não encontrado.");
@@ -69,18 +74,37 @@ const RegisterRecyclePoints = ({ navigation }) => {
             Alert.alert("Erro", "Falha ao buscar o CEP.");
         }
     };
+    
 
+    useFocusEffect(
+        React.useCallback(() => {
+            return () => {
+                if (formikRef.current) {
+                    setAddress("");
+                    formikRef.current.resetForm();
+                }
+            };
+        }, [])
+    );
+
+    const formikRef = React.useRef();
+    console.log(company_id);
     return (
         <PaperProvider style={styles.container}>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <Formik
+                innerRef={formikRef}
                     initialValues={{
-                        company_id: 1,
+                        company_id: company_id,
                         name: "",
                         phoneNumber: "",
                         postalCode: "",
                         addressNumber: "",
-                        // recyclingPreferences: []
+                        recyclePreference: "",
+                        street:"",
+                        district:"",
+                        city:"",
+                        state:""
                     }}
                     validationSchema={RegisterSchema}
                     onSubmit={handleRegisterRecyclePoints}
@@ -90,6 +114,7 @@ const RegisterRecyclePoints = ({ navigation }) => {
                     {({ handleChange, handleBlur, handleSubmit, values, errors, setFieldValue }) => (
                         <View style={styles.formContainer}>
 
+                            <Title style={styles.title}>Novo Ponto de Coleta</Title>
                             <CustomTextInput
                                 label="Nome do Ponto de Coleta"
                                 value={values.name}
@@ -120,7 +145,7 @@ const RegisterRecyclePoints = ({ navigation }) => {
                                 onChangeText={text => {
                                     handleChange("postalCode")(text);
                                     if (text.length === 8) {
-                                        fetchAddress(text);
+                                        fetchAddress(text, setFieldValue);
                                     }
                                 }
                                 }
@@ -142,31 +167,21 @@ const RegisterRecyclePoints = ({ navigation }) => {
                             />
                             <ErrorMessage error={errors.addressNumber} />
 
-                            <Text>Materiais recicláveis permitidos</Text>
+                            <Text>Material reciclável permitido</Text>
                             <Menu
                                 mode="outlined"
                                 visible={visible}
                                 onDismiss={closeMenu}
                                 style={styles.menuStyle}
-                                anchor={
-                                    <Button onPress={openMenu} style={styles.menuButton} mode="outlined" labelStyle={{ color: "#000000" }}>
-                                        {Array.isArray(values.recyclingPreferences) && values.recyclingPreferences.length > 0
-                                            ? values.recyclingPreferences.join(", ")
-                                            : "Selecione um ou mais materiais"}
-                                    </Button>
-                                }
+                                anchor={<Button onPress={openMenu} style={styles.menuButton} mode="outlined" labelStyle={{ color: "#000000" }}>{values.recyclePreference || "Selecione um material"}</Button>}
                             >
                                 <ScrollView style={styles.menuScroll}>
                                     {materials.map((material, index) => (
-                                        <Menu.Item
-                                            key={index}
-                                            onPress={() => selectMaterial(material, setFieldValue, values)}
-                                            title={material}
-                                            style={{ backgroundColor: (values.recyclingPreferences || []).includes(material) ? "#d6d0d0" : "transparent" }}
-                                        />
+                                        <Menu.Item key={index} onPress={() => selectMaterial(setFieldValue, material)} title={material} />
                                     ))}
                                 </ScrollView>
                             </Menu>
+                            <ErrorMessage error={errors.recyclePreference} />
 
                             <ErrorMessage error={errors.recyclingPreferences} />
 
@@ -186,23 +201,20 @@ const styles = StyleSheet.create({
     scrollContainer: {
         flexGrow: 1,
         justifyContent: "center",
+        alignItems: "center",
         padding: 16,
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: "bold",
+        marginBottom: 30,
+        textAlign: "center",
     },
     formContainer: {
         flexGrow: 1,
-    },
-    input: {
-        marginBottom: 5,
-        backgroundColor: "#f0f0f0",
-        borderRadius: 8,
-        height: 50,
-    },
-    dateButton: {
-        marginTop: 8,
-        backgroundColor: "#f0f0f0",
-        borderRadius: 8,
-        height: 50,
-        justifyContent: "center",
+        width: "100%",
+        justifyContent:"center",
+        
     },
     menuButton: {
         color: "#000000",

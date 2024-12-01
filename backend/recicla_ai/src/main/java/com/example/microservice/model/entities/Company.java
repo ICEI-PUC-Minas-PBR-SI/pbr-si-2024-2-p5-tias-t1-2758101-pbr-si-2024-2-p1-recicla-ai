@@ -39,6 +39,7 @@ public class Company {
         this.phoneNumber = company.phoneNumber();
         this.postal_code = company.postal_code();
         this.password = company.password();
+        this.addressNumber = company.addressNumber();
     }
 
     public Long getId() {

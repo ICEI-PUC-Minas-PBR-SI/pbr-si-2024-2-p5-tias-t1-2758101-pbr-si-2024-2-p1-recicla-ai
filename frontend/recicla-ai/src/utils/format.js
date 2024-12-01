@@ -22,11 +22,11 @@ export const formatCnpj = (input) => {
 };
 
 export const formatCPF =(input) => {
-    input = input.replace(/\D/g, '');
+    input = input.replace(/\D/g, "");
   
-    return input.replace(/(\d{3})(\d)/, '$1.$2')
-              .replace(/(\d{3})(\d)/, '$1.$2')
-              .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+    return input.replace(/(\d{3})(\d)/, "$1.$2")
+              .replace(/(\d{3})(\d)/, "$1.$2")
+              .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
 }
 
 export const formatNoDots = (input) => {

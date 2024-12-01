@@ -5,10 +5,13 @@ import PointsDetailUser from "../../components/PointsDetailUser";
 import CustomTextInput from "../../components/CustomTextInput";
 import { makeGetRequest } from "../../services/apiRequests";
 import LoadingModal from "../../components/LoadingModal";
+import { useAuth } from "../../contexts/Auth";
 
 const materialsOptions = ["todos", "Papel", "Plástico", "Vidro", "Metal", "Óleo", "Eletrônicos", "Tecido", "Resíduos Orgânicos"];
 
 const Points = () => {
+  const {signOut, authData} = useAuth();
+  console.log(authData);
   const [filter, setFilter] = useState("");
   const [selectedMaterial, setSelectedMaterial] = useState("todos");
   const [loading, setLoading] = useState(true);
@@ -84,7 +87,7 @@ const Points = () => {
             <PointsDetailUser
               key={point.id}
               name={point.name}
-              postalCode={point.postalCode}
+              address={`${point.street}, ${point.addressNumber} - ${point.district} ${point.city} - ${point.state} `}
               phoneNumber={point.phoneNumber}
               recyclePreference={point.recyclePreference}
             />

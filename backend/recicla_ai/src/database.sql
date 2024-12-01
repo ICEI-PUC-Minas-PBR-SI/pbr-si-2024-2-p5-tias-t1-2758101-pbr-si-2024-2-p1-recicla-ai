@@ -19,7 +19,7 @@ create table if not exists microservice.companies
     phone_number   varchar(255) null,
     postal_code    int          null,
     password       varchar(255) null,
-    address_number varchar(255) null,
+    addressNumber varchar(255) null,
     id             int auto_increment primary key
 );
 
@@ -32,6 +32,10 @@ create table if not exists microservice.recycle_address
     recycle_preference varchar(255) null,
     id             int auto_increment primary key,
     company_id     int
+    state            varchar(255) null,
+    city            varchar(255) null,
+    district            varchar(255) null,
+    street            varchar(255) null,
 );
 
 CREATE TABLE if not exists products (

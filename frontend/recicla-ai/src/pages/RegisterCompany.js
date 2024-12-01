@@ -93,7 +93,6 @@ const RegisterCompany = ({ navigation }) => {
                         password: "",
                         confirmPassword: "",
                         addressNumber: "",
-                        // recyclingPreferences: []
                     }}
                     validationSchema={RegisterSchema}
                     onSubmit={handleRegisterCompany}

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, FlatList, View } from "react-native";
 import { Button, Card, Title, Paragraph, Text, Avatar, Modal as PaperModal, Portal, Provider } from "react-native-paper";
+import { useAuth } from "../../contexts/Auth";
 
 const items = [
   { id: "1", title: "Item 1", description: "Descrição detalhada do Item 1", image: "https://via.placeholder.com/100", value: 50 },
@@ -12,7 +13,9 @@ const items = [
 ];
 
 export default function PurchaseScreen() {
-  const [userPoints, setUserPoints] = useState(100);
+  const { authData } = useAuth();
+  const userPoints = authData.points;
+  
   const [selectedItem, setSelectedItem] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -40,7 +43,7 @@ export default function PurchaseScreen() {
     <Provider>
       <View style={styles.container}>
         <View style={styles.pointsContainer}>
-          <Text style={styles.pointsText}>Pontos: {userPoints}</Text>
+          <Text style={styles.pointsText}>Pontos: {userPoints ?? "0" }</Text>
         </View>
 
         <FlatList
