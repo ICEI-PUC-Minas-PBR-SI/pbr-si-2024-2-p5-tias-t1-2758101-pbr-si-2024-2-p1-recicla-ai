@@ -183,8 +183,6 @@ const RegisterRecyclePoints = ({ navigation }) => {
                             </Menu>
                             <ErrorMessage error={errors.recyclePreference} />
 
-                            <ErrorMessage error={errors.recyclingPreferences} />
-
 
                             <CustomButton onPress={handleSubmit} title="Registrar novo Ponto" />
                         </View>
