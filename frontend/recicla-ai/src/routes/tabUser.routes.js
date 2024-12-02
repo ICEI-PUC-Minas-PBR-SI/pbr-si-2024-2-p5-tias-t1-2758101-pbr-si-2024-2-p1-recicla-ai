@@ -2,8 +2,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Feather, FontAwesome } from "react-native-vector-icons";
 
 import RecyclingPoints from "../pages/user/RecyclingPoints";
-import Home from "../pages/user/Home";
 import Shopping from "../pages/user/Shopping";
+import History from "../pages/user/History"
 import Profile from "../pages/user/Profile";
 
 const Tab = createBottomTabNavigator();
@@ -25,6 +25,14 @@ export default function TabRoutes() {
         options={{
           tabBarIcon: ({ color, size }) => <FontAwesome name="recycle" color={color} size={size} />,
           tabBarLabel: "Meus Pontos",
+        }}
+      />
+      <Tab.Screen
+        name="History"
+        component={History}
+        options={{
+          tabBarIcon: ({ color, size }) => <Feather name="file-text" color={color} size={size} />,
+          tabBarLabel: "Histórico",
         }}
       />
       <Tab.Screen

@@ -60,7 +60,7 @@ public class CompanyController {
             return companyFound;
         }
 
-        throw new Exception( "Erro: Empresa não encontrada");
+        throw new Exception( "Erro: Email ou Senha estão incorretos");
     }
 
 }

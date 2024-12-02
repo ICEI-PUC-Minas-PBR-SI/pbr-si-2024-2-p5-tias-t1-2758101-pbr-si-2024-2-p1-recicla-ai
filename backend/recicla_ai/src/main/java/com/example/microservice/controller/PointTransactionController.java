@@ -26,7 +26,7 @@ public class PointTransactionController {
         if(userFound.isPresent()){
             PointTransaction pointTransaction = new PointTransaction(pointTransactionRecord);
             this.pointRepo.save(pointTransaction);
-
+        
             User user = userFound.get();
             user.setPoints(pointTransactionRecord.quantity());
             this.userRepo.save(user);
@@ -36,5 +36,10 @@ public class PointTransactionController {
 
         throw new Exception( "Erro: Usuário não encontrado");
 
+    }
+
+    @GetMapping
+    public Iterable<PointTransaction> allPointTransaction(){
+        return pointRepo.findAll();
     }
 }

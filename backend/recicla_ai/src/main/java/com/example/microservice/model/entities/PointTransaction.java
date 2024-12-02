@@ -13,14 +13,14 @@ public class PointTransaction {
     private Long id;
     @Nonnull
     private String cpf;
-    private String quantity;
+    private Integer quantity;
     private String transaction_date;
     private String company_id;
     private String recycle_address_id;
 
     public PointTransaction(){}
 
-    public PointTransaction(String quantity, String transaction_date, String company_id, String cpf,String recycle_address_id) {
+    public PointTransaction(Integer quantity, String transaction_date, String company_id, String cpf,String recycle_address_id) {
         this.cpf = cpf;
         this.quantity = quantity;
         this.transaction_date = transaction_date;
@@ -53,11 +53,11 @@ public class PointTransaction {
         this.cpf = cpf;
     }
 
-    public String getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(String quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 

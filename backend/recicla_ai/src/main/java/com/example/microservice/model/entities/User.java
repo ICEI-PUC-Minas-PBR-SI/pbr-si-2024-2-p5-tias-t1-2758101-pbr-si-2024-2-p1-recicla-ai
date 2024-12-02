@@ -20,11 +20,11 @@ public class User {
     private String phoneNumber;
     private String recyclePreference;
     private String password;
-    private String points;
+    private Integer points;
 
     public User(){}
 
-    public User(String name, String email, String cpf, String birthdate, String phoneNumber, String recyclePreference, String password){
+    public User(String name, String email, String cpf, String birthdate, String phoneNumber, String recyclePreference, String password, Integer points){
         this.name = name;
         this.email = email;
         this.cpf = cpf;
@@ -32,6 +32,7 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.recyclePreference = recyclePreference;
         this.password = password;
+        this.points = points;
     }
 
     public User(UserRecord user) {
@@ -42,6 +43,7 @@ public class User {
         this.phoneNumber = user.phoneNumber();
         this.recyclePreference = user.recyclePreference();
         this.password = user.password();
+        this.points = user.points();
     }
 
     public Long getId() {
@@ -99,21 +101,31 @@ public class User {
     public void setRecyclePreference(String recyclePreference) {
         this.recyclePreference = recyclePreference;
     }
-    public String getPoints() {
+    
+    public Integer getPoints() {
         return points;
     }
 
-    public void setPoints(String points) {
+    public void setPoints(Integer points) {
         try {
-            int actualPoints = Integer.parseInt(this.points);
-            int newPoints = actualPoints + Integer.parseInt(points);
-            this.points = String.valueOf(newPoints);
-        }
-        catch (NumberFormatException e) {
+            int actualPoints = (this.points != null) ? this.points : 0;
+            int newPoints = actualPoints + points;
+            this.points = newPoints;
+        } catch (NumberFormatException e) {
             return;
         }
-
     }
+
+       public void subtractPoints(Integer points) {
+        try {
+            int actualPoints = (this.points != null) ? this.points : 0;
+            int newPoints = actualPoints - points;
+            this.points = newPoints;
+        } catch (NumberFormatException e) {
+            return;
+        }
+    }
+
     public String getPassword() {
         return password;
     }

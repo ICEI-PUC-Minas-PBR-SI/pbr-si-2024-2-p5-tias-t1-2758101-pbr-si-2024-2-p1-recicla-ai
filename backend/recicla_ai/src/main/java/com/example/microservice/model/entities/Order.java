@@ -29,4 +29,30 @@ public class Order {
         this.cpf = order.cpf();
         this.transaction_date = order.transaction_date();
     }
+
+    public String getProductId() {
+        return product_id;
+    }
+
+    public void setProductId(String product_id) {
+        this.product_id = product_id;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void SetCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public void SetTransactionDate(String transaction_date) {
+        this.transaction_date = transaction_date;
+    }
+
+    public String getTransactionDate() {
+        return transaction_date;
+    }
+
+
 }

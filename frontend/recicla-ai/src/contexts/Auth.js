@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { authenticateUser, authenticateCompany } from "../services/authServices";
+import { makeGetRequest } from "../services/apiRequests";
 
 export const AuthContext = createContext({});
 
@@ -11,7 +12,7 @@ export const AuthProvider = ({ children }) => {
   const loadAuthData = async () => {
     const storedUser = await AsyncStorage.getItem("user");
     const storedAuthType = await AsyncStorage.getItem("authType");
-    
+
     if (storedUser && storedAuthType) {
       setAuthData(JSON.parse(storedUser));
       setAuthType(storedAuthType);
@@ -20,11 +21,24 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     loadAuthData();
+    updateUserData();
   }, []);
+
+  const updateUserData = async () => {
+    if (authData && authData.id) {
+      try {
+        const response = await makeGetRequest(`user/${authData.id}`);
+        setAuthData({ ...authData, points: response.points });
+        await AsyncStorage.setItem("user", JSON.stringify({ ...authData, points: response.points }));
+      } catch (err) {
+        console.error("Erro ao carregar os dados atualizados do usuário.");
+      }
+    }
+  };
 
   async function signInUser(data) {
     const userData = await authenticateUser(data);
-    console.log(userData);
+
     setAuthData(userData);
     setAuthType("user");
     await AsyncStorage.setItem("user", JSON.stringify(userData));
@@ -47,7 +61,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ authData, authType, isAuthenticated: !!authData, signInUser, signInCompany, signOut }}>
+    <AuthContext.Provider value={{ authData, authType, isAuthenticated: !!authData, signInUser, signInCompany, signOut, updateUserData }}>
       {children}
     </AuthContext.Provider>
   );

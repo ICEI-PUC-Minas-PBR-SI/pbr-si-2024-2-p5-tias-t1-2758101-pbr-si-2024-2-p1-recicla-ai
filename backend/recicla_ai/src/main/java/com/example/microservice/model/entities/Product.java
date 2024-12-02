@@ -14,13 +14,13 @@ public class Product {
     private Long id;
     @Nonnull
     private String name;
-    private String value;
+    private Integer value;
     private String description;
     private String category;
-    private String quantity;
+    private Integer quantity;
 
     public Product(){}
-    public Product(String name, String value, String description, String category, String quantity){
+    public Product(String name, Integer value, String description, String category, Integer quantity){
         this.name = name;
         this.value = value;
         this.description = description;
@@ -35,11 +35,11 @@ public class Product {
         this.quantity = user.quantity();
     }
 
-    public String getValue() {
+    public Integer getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(Integer value) {
         this.value = value;
     }
 
@@ -59,11 +59,11 @@ public class Product {
         this.category = category;
     }
 
-    public String getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(String quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 

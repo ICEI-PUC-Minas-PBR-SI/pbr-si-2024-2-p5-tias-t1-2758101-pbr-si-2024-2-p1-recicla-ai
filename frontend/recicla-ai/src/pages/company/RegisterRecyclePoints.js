@@ -88,7 +88,7 @@ const RegisterRecyclePoints = ({ navigation }) => {
     );
 
     const formikRef = React.useRef();
-    console.log(company_id);
+
     return (
         <PaperProvider style={styles.container}>
             <ScrollView contentContainerStyle={styles.scrollContainer}>

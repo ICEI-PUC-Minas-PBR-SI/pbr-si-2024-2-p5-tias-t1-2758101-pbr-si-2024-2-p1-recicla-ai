@@ -21,14 +21,25 @@ export const makePostRequest = async (route, data) => {
 
 export const makeGetRequest = async (route, params = {}) => {
     try {
-        const response = await api.get(route, { params });
-        return response.data;
+      const response = await api.get(route, { params });
+      return response.data;
     } catch (error) {
-        const errorMessage = error.response?.data?.message || "Erro ao realizar a requisição.";
+      if (error.response) {
+        if (error.response.status === 404) {
+          return [];
+        }
+  
+        const errorMessage = error.response?.data?.message ||
+                             error.response?.statusText ||
+                             "Erro ao realizar a requisição.";
         console.error("Erro:", errorMessage);
-
+  
         Alert.alert("Erro", errorMessage);
-
-        throw error;
+      } else {
+        console.error("Erro de rede ou configuração:", error);
+        Alert.alert("Erro", "Erro ao tentar se conectar com o servidor.");
+      }
+  
+      throw error; 
     }
-};
+  };

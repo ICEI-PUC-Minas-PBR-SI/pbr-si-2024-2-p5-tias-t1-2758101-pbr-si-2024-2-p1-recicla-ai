@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, Alert, ScrollView, Modal, ActivityIndicator } from "react-native";
-import { Title, Paragraph, PaperProvider, Text, Menu, Button} from "react-native-paper";
+import React, { useState, useEffect, useRef } from "react";
+import { StyleSheet, Alert, ScrollView } from "react-native";
+import { Title, Paragraph, PaperProvider, Text, Menu, Button } from "react-native-paper";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { makeGetRequest, makePostRequest } from "../../services/apiRequests";
@@ -21,6 +21,7 @@ const RegisterPoints = ({ navigation }) => {
     const [visible, setVisible] = useState(false);
     const [recyclePoints, setRecyclePoints] = useState([]);
     const [selectedPointName, setSelectedPointName] = useState("");
+    const formikRef = useRef(null);
 
     const filteredPoints = recyclePoints.filter((point) => point.companyId == company_id);
 
@@ -73,20 +74,11 @@ const RegisterPoints = ({ navigation }) => {
 
     useFocusEffect(
         React.useCallback(() => {
-            return () => {
-                if (formikRef.current) {
-                    formikRef.current.resetForm();
-                    setSelectedPointName("");
-                }
-            };
+            fetchRecyclePoints();
+            setSelectedPointName("");
+            formikRef.current.resetForm();
         }, [])
     );
-
-    useEffect(() => {
-        fetchRecyclePoints();
-    }, []);
-
-    const formikRef = React.useRef();
 
     return (
         <PaperProvider style={styles.container}>
@@ -94,7 +86,7 @@ const RegisterPoints = ({ navigation }) => {
                 <Title style={styles.title}>Adicionar Pontos</Title>
                 <Formik
                     innerRef={formikRef}
-                    initialValues={{ cpf: "", quantity: "", company_id: company_id, recycle_address_id: "" }}
+                    initialValues={{ cpf: "", quantity: "", company_id: company_id, recycle_address_id: "", transaction_date: new Date() }}
                     onSubmit={handleRegisterPoints}
                     validationSchema={validationSchema}
                     validateOnChange={false}
@@ -105,7 +97,7 @@ const RegisterPoints = ({ navigation }) => {
                             <CustomTextInput
                                 label="CPF"
                                 value={formatCPF(values.cpf)}
-                                onChangeText={text => {
+                                onChangeText={(text) => {
                                     if (text.length <= 14) {
                                         handleChange("cpf")(text);
                                     }
@@ -161,7 +153,6 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         padding: 16,
         alignContent: "center",
-        justifyContent: "center",
     },
     title: {
         fontSize: 24,
@@ -180,10 +171,9 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     menuButton: {
-        color: "#000000",
         borderRadius: 8,
         marginTop: 8,
-        marginBottom: 15
+        marginBottom: 15,
     },
     menuScroll: {
         backgroundColor: "#f0f0f0",

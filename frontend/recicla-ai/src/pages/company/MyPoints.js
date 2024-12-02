@@ -12,6 +12,7 @@ const materialsOptions = ["todos", "Papel", "Plástico", "Vidro", "Metal", "Óle
 const MyPointsRecycleCompany = () => {
   const { authData } = useAuth();
   const company_id = authData.id;
+  
   const [filter, setFilter] = useState("");
   const [selectedMaterial, setSelectedMaterial] = useState("todos");
   const [recyclePoints, setRecyclePoints] = useState([]);
@@ -29,8 +30,8 @@ const MyPointsRecycleCompany = () => {
   });
 
   const fetchRecyclePoints = async () => {
-    setLoading(true);
     try {
+      setLoading(true);
       const response = await makeGetRequest("recycle");
       setRecyclePoints(response || []);
     } catch (err) {

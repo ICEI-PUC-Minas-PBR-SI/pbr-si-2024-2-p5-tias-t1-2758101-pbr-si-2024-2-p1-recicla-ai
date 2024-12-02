@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, ScrollView, Text, Modal, ActivityIndicator } from "react-native";
+import { View, StyleSheet, ScrollView, Text, RefreshControl } from "react-native";
 import { PaperProvider, Menu, IconButton } from "react-native-paper";
 import PointsDetailUser from "../../components/PointsDetailUser";
 import CustomTextInput from "../../components/CustomTextInput";
 import { makeGetRequest } from "../../services/apiRequests";
 import LoadingModal from "../../components/LoadingModal";
-import { useAuth } from "../../contexts/Auth";
 
 const materialsOptions = ["todos", "Papel", "Plástico", "Vidro", "Metal", "Óleo", "Eletrônicos", "Tecido", "Resíduos Orgânicos"];
 
 const Points = () => {
-  const {signOut, authData} = useAuth();
-  console.log(authData);
   const [filter, setFilter] = useState("");
   const [selectedMaterial, setSelectedMaterial] = useState("todos");
   const [loading, setLoading] = useState(true);
   const [recyclePoints, setRecyclePoints] = useState([]);
   const [visible, setVisible] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
 
   const filteredPoints = recyclePoints.filter((point) => {
     const matchesFilter = point.name.toLowerCase().includes(filter.toLowerCase());
@@ -25,24 +24,35 @@ const Points = () => {
     return matchesFilter && matchesMaterial;
   });
 
-  useEffect(() => {
-    const fetchRecyclePoints = async () => {
-      try {
-        const response = await makeGetRequest("recycle");
-        setRecyclePoints(response || []);
-      } catch (err) {
-        console.error("Erro ao carregar os pontos de coleta.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchRecyclePoints = async () => {
+    try {
+      setLoading(true);
+      const response = await makeGetRequest("recycle");
+      setRecyclePoints(response || []);
+    } catch (err) {
+      console.error("Erro ao carregar os pontos de coleta.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchRecyclePoints();
+    setRefreshing(false);
+  };
+
+
+  useEffect(() => {
     fetchRecyclePoints();
   }, []);
 
   return (
     <PaperProvider style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}
+      >
         <View style={styles.inputContainer}>
           <CustomTextInput
             label="Filtrar pontos de coleta..."

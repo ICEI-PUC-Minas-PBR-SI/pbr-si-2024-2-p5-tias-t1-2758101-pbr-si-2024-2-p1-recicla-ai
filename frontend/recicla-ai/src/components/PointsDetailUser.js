@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { Text } from "react-native-paper";
 import { Linking } from "react-native";
 
-const PointsDetailUser = ({ name, address, phoneNumber, recyclePreference, postalCode }) => {
+const PointsDetailUser = ({ name, address, phoneNumber, recyclePreference, }) => {
 
   const confirmNavigation = () => {
     Alert.alert(
@@ -23,7 +23,8 @@ const PointsDetailUser = ({ name, address, phoneNumber, recyclePreference, posta
   };
 
   const openGoogleMaps = () => {
-    const url = `https://www.google.com/maps/search/?api=1&query=${postalCode}`;
+    const formattedQuery = encodeURIComponent(`${address}`);
+    const url = `https://www.google.com/maps/search/?api=1&query=${address}`;
     Linking.openURL(url);
   };
 

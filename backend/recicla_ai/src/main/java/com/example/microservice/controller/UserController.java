@@ -45,7 +45,7 @@ public class UserController {
             return userFound;
         }
 
-        throw new Exception( "Erro: Usuário não encontrado");
+        throw new Exception( "Erro: Email ou Senha estão incorretos");
     }
 
     @PutMapping(path = "/{id}")

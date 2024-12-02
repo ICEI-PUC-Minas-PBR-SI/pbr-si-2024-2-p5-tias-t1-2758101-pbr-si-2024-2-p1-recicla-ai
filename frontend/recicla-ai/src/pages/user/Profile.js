@@ -8,11 +8,10 @@ export default function SettingsScreen({ navigation }) {
     const { signOut, authData } = useAuth();
     const userId = authData.id;
     const userName = authData.name;
-    // signOut();
+
     const options = [
-        { id: 1, title: "Histórico", icon: "time-outline", color: "#333", onPress: () => console.log("Histórico") },
-        { id: 2, title: "Configurações", icon: "settings-outline", color: "#333", onPress: () => console.log("Configurações") },
-        { id: 3, title: "Sair", icon: "log-out-outline", color: "red", onPress: () => signOut() },
+        { id: 1, title: "Configurações", icon: "settings-outline", color: "#333", onPress: () => console.log("Configurações") },
+        { id: 2, title: "Sair", icon: "log-out-outline", color: "red", onPress: () => signOut() },
     ];
 
     return (

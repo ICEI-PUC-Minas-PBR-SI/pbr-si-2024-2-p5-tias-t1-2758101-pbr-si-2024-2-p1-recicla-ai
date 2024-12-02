@@ -8,7 +8,6 @@ import { validateCnpj, validatePhoneNumber } from "../utils/validations";
 import CustomTextInput from "../components/CustomTextInput";
 import { Formik } from "formik";
 import ErrorMessage from "../components/ErrorMessageFormik";
-import materials from "../utils/materials";
 import { makePostRequest, makeGetRequest } from "../services/apiRequests";
 import LoadingModal from "../components/LoadingModal";
 
@@ -27,11 +26,9 @@ const RegisterSchema = Yup.object().shape({
     confirmPassword: Yup.string()
         .oneOf([Yup.ref("password"), null], "As senhas não coincidem")
         .required("A confirmação da senha é obrigatória"),
-    recyclingPreferences: Yup.array().required("Selecione um ou mais materiais recicláveis que sua empresa aceitará."),
 });
 
 const RegisterCompany = ({ navigation }) => {
-    const [visible, setVisible] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [address, setAddress] = useState("");
@@ -50,18 +47,6 @@ const RegisterCompany = ({ navigation }) => {
             setLoading(false);
         }
     }
-
-
-    const openMenu = () => setVisible(true);
-    const closeMenu = () => setVisible(false);
-
-    const selectMaterial = (material, setFieldValue, values) => {
-        const currentPreferences = values.recyclingPreferences || [];
-        setFieldValue("recyclingPreferences", currentPreferences.includes(material)
-            ? currentPreferences.filter((m) => m !== material)
-            : [...currentPreferences, material]
-        );
-    };
 
     const fetchAddress = async (cep) => {
         try {
@@ -177,33 +162,6 @@ const RegisterCompany = ({ navigation }) => {
                             />
                             <ErrorMessage error={errors.addressNumber} />
 
-                            <Text>Materiais recicláveis permitidos</Text>
-                            <Menu
-                                mode="outlined"
-                                visible={visible}
-                                onDismiss={closeMenu}
-                                style={styles.menuStyle}
-                                anchor={
-                                    <Button onPress={openMenu} style={styles.menuButton} mode="outlined" labelStyle={{ color: "#000000" }}>
-                                        {Array.isArray(values.recyclingPreferences) && values.recyclingPreferences.length > 0
-                                            ? values.recyclingPreferences.join(", ")
-                                            : "Selecione um ou mais materiais"}
-                                    </Button>
-                                }
-                            >
-                                <ScrollView style={styles.menuScroll}>
-                                    {materials.map((material, index) => (
-                                        <Menu.Item
-                                            key={index}
-                                            onPress={() => selectMaterial(material, setFieldValue, values)}
-                                            title={material}
-                                            style={{ backgroundColor: (values.recyclingPreferences || []).includes(material) ? "#d6d0d0" : "transparent" }}
-                                        />
-                                    ))}
-                                </ScrollView>
-                            </Menu>
-
-                            <ErrorMessage error={errors.recyclingPreferences} />
 
                             <TextInput
                                 label="Senha"
