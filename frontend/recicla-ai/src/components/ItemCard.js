@@ -22,7 +22,7 @@ export default function ItemCard({ item, onPress }) {
     <Card style={styles.item} onPress={() => onPress(item)}>
       <Card.Content style={styles.cardContent}>
         <Feather name={getIconByCategory(item.category)} size={50} color="#4CAF50" style={styles.icon} />
-        <Title style={styles.cardTitle}>{item.title}</Title>
+        <Title style={styles.cardTitle}>{item.name}</Title>
         <Paragraph style={styles.cardValue}>{item.value} pontos</Paragraph>
       </Card.Content>
     </Card>
@@ -43,13 +43,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   cardTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 5,
   },
   cardValue: {
-    fontSize: 14,
+    fontSize: 12,
     color: "#888",
     fontWeight:"bold"
   },

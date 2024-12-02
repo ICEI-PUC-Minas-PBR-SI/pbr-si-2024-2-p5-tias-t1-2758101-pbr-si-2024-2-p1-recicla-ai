@@ -26,7 +26,7 @@ export default function ItemDetail({ visible, item, onClose, onRedeem, userPoint
         <Portal>
             <PaperModal visible={visible} onDismiss={onClose} contentContainerStyle={styles.modalContent}>
                 <Feather name={getIconName(item.category)} size={100} color="#4CAF50" style={styles.modalIcon} />
-                <Title>{item.title}</Title>
+                <Title>{item.name}</Title>
                 <Paragraph>{item.description}</Paragraph>
                 <Paragraph style={styles.modalValue}>Valor: {item.value} pontos</Paragraph>
 
