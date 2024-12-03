@@ -11,7 +11,7 @@ export default function StackRoutes() {
   
   return (
     <Stack.Navigator initialRouteName="Login" screenOptions={{ animation: "slide_from_right" }}>
-      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
 
       <Stack.Screen
         name="CompanyRegister"

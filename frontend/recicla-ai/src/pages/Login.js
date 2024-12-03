@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Text, Image, TouchableOpacity, Alert, } from "react-native";
-import { TextInput, Switch, Dropdown } from "react-native-paper";
+import { View, StyleSheet, Text, Image, TouchableOpacity, Alert } from "react-native";
+import { TextInput, Switch } from "react-native-paper";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import ErrorMessage from "../components/ErrorMessageFormik";
@@ -15,39 +15,35 @@ const LoginSchema = Yup.object().shape({
 });
 
 const Login = ({ navigation }) => {
-    const { signInUser, signInCompany, authData, authType } = useAuth();
+    const { signInUser, signInCompany } = useAuth();
     const [showPassword, setShowPassword] = useState(false);
     const [isSwitchOn, setIsSwitchOn] = React.useState(false);
 
     const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
 
-    async function handleLogin(values, actions) {
+    async function handleLogin(values) {
         try {
-            var response;
-            if (isSwitchOn) {
-                response = signInCompany(values);
-            } else {
-                response = signInUser(values);
-            }
-
+            const response = isSwitchOn ? signInCompany(values) : signInUser(values);
             if (!response) {
                 Alert.alert("Erro", "Falha ao realizar login!");
             }
         } catch (e) {
             console.trace("erro: " + e);
         }
-    };
+    }
 
     return (
         <Formik
             initialValues={{ email: "", password: "" }}
-            onSubmit={(values, actions) => handleLogin(values, actions)}
+            onSubmit={handleLogin}
             validationSchema={LoginSchema}
             validateOnBlur={false}
             validateOnChange={false}
         >
-            {({ handleChange, handleBlur, handleSubmit, values, errors, touched, resetForm }) => (
+            {({ handleChange, handleBlur, handleSubmit, values, errors, resetForm }) => (
                 <View style={styles.container}>
+                    <Text style={styles.title}>Recicla Aí!</Text>
+
                     <Image source={require("../assets/logo.png")} style={styles.logo} />
 
                     <CustomTextInput
@@ -65,10 +61,12 @@ const Login = ({ navigation }) => {
                         onChangeText={handleChange("password")}
                         secureTextEntry={!showPassword}
                         style={styles.input}
-                        right={<TextInput.Icon
-                            icon={showPassword ? "eye-off" : "eye"}
-                            onPress={() => setShowPassword(!showPassword)}
-                        />}
+                        right={
+                            <TextInput.Icon
+                                icon={showPassword ? "eye-off" : "eye"}
+                                onPress={() => setShowPassword(!showPassword)}
+                            />
+                        }
                         mode="outlined"
                     />
                     <ErrorMessage error={errors.password} />
@@ -76,18 +74,24 @@ const Login = ({ navigation }) => {
                     <View style={styles.switchContainer}>
                         <Text>Selecione o tipo de login</Text>
                         <View style={styles.switchRightContainer}>
-                            <Text style={{ fontWeight: "bold", marginRight: 10, color: colors.backgroundButton }}>{isSwitchOn ? "EMPRESA" : "USUÁRIO"}</Text>
-                            <Switch value={isSwitchOn} onValueChange={onToggleSwitch} thumbColor={isSwitchOn ? colors.backgroundButton : colors.activeThumb} />
+                            <Text style={{ fontWeight: "bold", marginRight: 10, color: colors.backgroundButton }}>
+                                {isSwitchOn ? "EMPRESA" : "USUÁRIO"}
+                            </Text>
+                            <Switch
+                                value={isSwitchOn}
+                                onValueChange={onToggleSwitch}
+                                thumbColor={isSwitchOn ? colors.backgroundButton : colors.activeThumb}
+                            />
                         </View>
                     </View>
 
                     <CustomButton onPress={handleSubmit} title="Entrar" />
 
                     <View style={styles.row}>
-                        <TouchableOpacity onPress={() => { resetForm(); navigation.navigate("UserRegister") }}>
+                        <TouchableOpacity onPress={() => { resetForm(); navigation.navigate("UserRegister"); }}>
                             <Text style={styles.link}>Registrar Usuário</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => { resetForm(); navigation.navigate("CompanyRegister") }}>
+                        <TouchableOpacity onPress={() => { resetForm(); navigation.navigate("CompanyRegister"); }}>
                             <Text style={styles.link}>Registrar Empresa</Text>
                         </TouchableOpacity>
                     </View>
@@ -99,6 +103,14 @@ const Login = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     container: { flex: 1, justifyContent: "center", padding: 16 },
+    title: {
+        fontSize: 32,
+        fontWeight: "bold",
+        textAlign: "center",
+        color: colors.backgroundButton,
+        marginBottom: 20,
+    },
+    
     logo: {
         width: 100,
         height: 100,
@@ -131,7 +143,6 @@ const styles = StyleSheet.create({
         justifyContent: "flex-end",
         flex: 1,
     },
-
 });
 
 export default Login;
